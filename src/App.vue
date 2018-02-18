@@ -35,7 +35,7 @@ h1 {
 h2 {
 	font-size: 18px;
 }
-.el-menu-item.auth {
+.el-menu--horizontal > .el-menu-item.auth {
 	float: right;
 }
 </style>
