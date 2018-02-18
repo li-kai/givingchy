@@ -3,7 +3,7 @@
     <el-col :xs="24" :sm="18">
     <el-row :gutter="20">
       <el-col :xs="24" :sm="16">
-        <img src="http://via.placeholder.com/150x150" class="image">
+        <img src="https://via.placeholder.com/150x150" class="image">
       </el-col>
       <el-col :xs="24" :sm="8">
         <h1>{{project.title}}</h1>
