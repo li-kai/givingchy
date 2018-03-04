@@ -18,3 +18,7 @@
 
 
 # End of https://www.gitignore.io/api/go
+
+### Docker ###
+
+postgres-data/

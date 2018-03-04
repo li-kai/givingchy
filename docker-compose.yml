@@ -2,8 +2,20 @@ version: "3"
 services:
   app:
     build: .
-    command: ["go", "run", "main.go"]
+    command: ["go", "run", "src/main.go"]
     volumes:
       - .:/go/src/app
     ports:
       - 8080:8080
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:alpine
+    environment:
+      - POSTGRES_USER=psql
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=testdb
+    volumes:
+      - ./postgres-data/postgres:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
