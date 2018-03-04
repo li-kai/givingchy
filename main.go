@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -9,7 +10,14 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
 )
+
+// App for initial db and router setup
+type App struct {
+	Router *mux.Router
+	DB     *sql.DB
+}
 
 func main() {
 	var router = mux.NewRouter()
@@ -28,6 +36,11 @@ func main() {
 	corsHandler := handlers.CORS(originsOk, headersOk, methodsOk)(router)
 	log.Fatal(http.ListenAndServe(":"+port, corsHandler))
 	fmt.Println("Running server at port" + port)
+
+	fmt.Println(
+		os.Getenv("POSTGRES_USER"),
+		os.Getenv("POSTGRES_PASSWORD"),
+		os.Getenv("POSTGRES_DB"))
 }
 
 func handleQryMessage(w http.ResponseWriter, r *http.Request) {

@@ -4,7 +4,6 @@ services:
     build: .
     env_file:
       - .env
-    command: ["go", "run", "src/main.go"]
     volumes:
       - .:/go/src/app
     ports:
