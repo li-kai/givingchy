@@ -3,24 +3,31 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/gorilla/handlers"
 	"log"
 	"net/http"
+	"os"
+
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 )
 
 func main() {
 	var router = mux.NewRouter()
 	router.HandleFunc("/healthcheck", healthCheck).Methods("GET")
 	router.HandleFunc("/message", handleQryMessage).Methods("GET")
-	router.HandleFunc("/m/{msg}", handleUrlMessage).Methods("GET")
+	router.HandleFunc("/m/{msg}", handleURLMessage).Methods("GET")
 
 	headersOk := handlers.AllowedHeaders([]string{"Authorization"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS"})
 
-	fmt.Println("Running server!")
-	log.Fatal(http.ListenAndServe(":3000", handlers.CORS(originsOk, headersOk, methodsOk)(router)))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	corsHandler := handlers.CORS(originsOk, headersOk, methodsOk)(router)
+	log.Fatal(http.ListenAndServe(":"+port, corsHandler))
+	fmt.Println("Running server at port" + port)
 }
 
 func handleQryMessage(w http.ResponseWriter, r *http.Request) {
@@ -30,7 +37,7 @@ func handleQryMessage(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": message})
 }
 
-func handleUrlMessage(w http.ResponseWriter, r *http.Request) {
+func handleURLMessage(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	message := vars["msg"]
 
