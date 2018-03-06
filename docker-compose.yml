@@ -2,12 +2,12 @@ version: "3"
 services:
   server:
     build:
-      context: .
+      context: ./api
       dockerfile: Dockerfile.${ENV:-dev}
     env_file:
       - .env
     volumes:
-      - .:/go/src/server
+      - ./api:/go/src/server
     ports:
       - 8080:8080
     depends_on:
