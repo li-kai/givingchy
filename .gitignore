@@ -25,3 +25,4 @@
 ### Docker ###
 
 postgres-data/
+tmp/
