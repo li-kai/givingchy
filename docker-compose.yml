@@ -9,9 +9,23 @@ services:
     volumes:
       - ./api:/go/src/server
     ports:
-      - 8080:8080
+      - 8081:8081
     depends_on:
       - postgres
+    restart: on-failure
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile.${ENV:-dev}
+    env_file:
+      - .env
+    volumes:
+      - ./web:/home/node/app
+      - /home/node/app/node_modules
+    ports:
+      - 8080:8080
+    depends_on:
+      - server
     restart: on-failure
   postgres:
     image: postgres:alpine

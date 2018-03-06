@@ -6,6 +6,6 @@ RUN apk add --no-cache git && \
 RUN mkdir -p /go/src/server
 WORKDIR /go/src/server
 
-COPY . /go/src/server
+COPY . .
 
 CMD ["fresh"]
