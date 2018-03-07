@@ -12,6 +12,7 @@
 <script>
 import Card from './Card.vue';
 import projects from '../fixtures';
+import axios from 'axios';
 
 export default {
   name: 'root',
@@ -22,6 +23,11 @@ export default {
     return {
       projects
     };
+  },
+  created() {
+    axios.get('api/healthcheck').then((res) => {
+      console.log(res);
+    }).catch((err) => console.error(err));
   }
 };
 </script>

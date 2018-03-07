@@ -1,12 +1,8 @@
 FROM node:alpine
-USER node
 
 RUN mkdir -p /home/node/app
 WORKDIR /home/node/app
 
-COPY package.json yarn.lock ./
-RUN yarn
-
 COPY . .
 
-CMD ["yarn", "serve"]
+CMD yarn && yarn serve
