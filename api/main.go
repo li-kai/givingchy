@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -40,9 +41,14 @@ func (server *Server) Initialize(user, password, dbname string) {
 		fmt.Sprintf("host=postgres sslmode=disable user=%s password=%s dbname=%s", user, password, dbname)
 
 	var err error
-	server.DB, err = sql.Open("postgres", connectionString)
-	if err != nil {
-		log.Fatal(err)
+	// Try to connect every second
+	for i := 0; i < 10; i++ {
+		server.DB, err = sql.Open("postgres", connectionString)
+		if err == nil {
+			break
+		}
+
+		time.Sleep(1 * time.Second)
 	}
 	err = server.DB.Ping()
 	if err != nil {
