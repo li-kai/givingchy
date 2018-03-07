@@ -42,7 +42,7 @@ func (server *Server) Initialize(user, password, dbname string) {
 
 	var err error
 	// Try to connect every second
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 15; i++ {
 		server.DB, err = sql.Open("postgres", connectionString)
 		if err == nil {
 			break

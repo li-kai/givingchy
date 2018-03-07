@@ -1,7 +1,7 @@
 FROM golang:alpine
 
-RUN mkdir -p /go/src/server
-WORKDIR /go/src/server
+RUN mkdir -p /go/src/api
+WORKDIR /go/src/api
 
 COPY . .
 RUN go build -o bin *.go
@@ -9,6 +9,6 @@ RUN go build -o bin *.go
 FROM alpine:latest
 
 WORKDIR /root/
-COPY --from=0 /go/src/server/bin .
+COPY --from=0 /go/src/api/bin .
 
-CMD ["./bin"]
+CMD ./bin

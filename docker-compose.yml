@@ -1,13 +1,13 @@
 version: "3"
 services:
-  server:
+  api:
     build:
       context: ./api
       dockerfile: Dockerfile.${ENV:-dev}
     env_file:
       - .env
     volumes:
-      - ./api:/go/src/server
+      - ./api:/go/src/api
     ports:
       - 8081:8081
     depends_on:
@@ -20,12 +20,12 @@ services:
     env_file:
       - .env
     volumes:
+      - yarn:/home/node/.cache/yarn
       - ./web:/home/node/app
-      - /home/node/app/node_modules
     ports:
       - 8080:8080
     depends_on:
-      - server
+      - api
     restart: on-failure
   postgres:
     image: postgres:alpine
@@ -36,3 +36,6 @@ services:
       - ./db/seed.sql:/docker-entrypoint-initdb.d/seed.sql
     ports:
       - 5432:5432
+
+volumes:
+  yarn:
