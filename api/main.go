@@ -2,39 +2,38 @@ package main
 
 import (
 	"database/sql"
-	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
-	"os"
-	"strconv"
-	"time"
 
-	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi"
 	_ "github.com/lib/pq"
 )
 
 // Server for initial db and router setup
 type Server struct {
-	Router *mux.Router
-	DB     *sql.DB
+	// Router *mux.Router
+	DB *sql.DB
 }
 
 func main() {
-	server := Server{}
-	server.Initialize(
-		os.Getenv("POSTGRES_USER"),
-		os.Getenv("POSTGRES_PASSWORD"),
-		os.Getenv("POSTGRES_DB"))
+	r := chi.NewRouter()
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("welcome"))
+	})
+	http.ListenAndServe(":3000", r)
+	// server := Server{}
+	// server.Initialize(
+	// 	os.Getenv("POSTGRES_USER"),
+	// 	os.Getenv("POSTGRES_PASSWORD"),
+	// 	os.Getenv("POSTGRES_DB"))
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8081"
-	}
-	server.Run(port)
+	// port := os.Getenv("PORT")
+	// if port == "" {
+	// 	port = "8081"
+	// }
+	// server.Run(port)
 }
 
+/*
 // Initialize sets up the database connection and routes for the server
 func (server *Server) Initialize(user, password, dbname string) {
 	connectionString :=
@@ -195,3 +194,4 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 func healthCheck(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode("Still alive!")
 }
+*/
