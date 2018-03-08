@@ -1,36 +1,47 @@
 package main
 
 import (
-	"database/sql"
+	"encoding/json"
+	"log"
 	"net/http"
+	"os"
+
+	"api/models"
 
 	"github.com/go-chi/chi"
-	_ "github.com/lib/pq"
+	"github.com/go-chi/chi/middleware"
 )
 
-// Server for initial db and router setup
-type Server struct {
-	// Router *mux.Router
-	DB *sql.DB
+// Env for persisting states global to server
+type Env struct {
+	db models.Datastore
 }
 
 func main() {
 	r := chi.NewRouter()
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("welcome"))
-	})
-	http.ListenAndServe(":3000", r)
-	// server := Server{}
-	// server.Initialize(
-	// 	os.Getenv("POSTGRES_USER"),
-	// 	os.Getenv("POSTGRES_PASSWORD"),
-	// 	os.Getenv("POSTGRES_DB"))
+	r.Use(middleware.Heartbeat("/"))
+	r.Use(middleware.Recoverer)
 
-	// port := os.Getenv("PORT")
-	// if port == "" {
-	// 	port = "8081"
-	// }
-	// server.Run(port)
+	db, err := models.NewDB()
+	if err != nil {
+		log.Panic(err)
+	}
+	env := &Env{db}
+	r.Get("/products", env.getProducts)
+
+	port := os.Getenv("PORT")
+	log.Println("Running server at port " + port)
+	http.ListenAndServe(":"+port, r)
+}
+
+func (env *Env) getProducts(w http.ResponseWriter, r *http.Request) {
+	products, err := env.db.AllProducts()
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, products)
 }
 
 /*
@@ -179,6 +190,9 @@ func (server *Server) deleteProduct(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }
 
+
+*/
+
 func respondWithError(w http.ResponseWriter, code int, message string) {
 	respondWithJSON(w, code, map[string]string{"error": message})
 }
@@ -190,8 +204,3 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.WriteHeader(code)
 	w.Write(response)
 }
-
-func healthCheck(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode("Still alive!")
-}
-*/
