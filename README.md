@@ -3,8 +3,6 @@
 ## Setup
 
 ```sh
-# install dependencies
-godep ensure
 # set up environment variables
 cp .env.example .env
 ```
