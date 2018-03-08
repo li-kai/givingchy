@@ -13,3 +13,10 @@ cp .env.example .env
 # run all containers
 docker-compose up
 ```
+
+## Testing
+
+```sh
+# api tests
+docker-compose exec api go test
+```
