@@ -1,7 +1,8 @@
-FROM golang:alpine
+FROM golang:1.10-alpine
 
-RUN apk add --no-cache git && \
-    go get github.com/pilu/fresh
+RUN apk add --no-cache git curl && \
+    go get github.com/pilu/fresh && \
+    curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 
 RUN mkdir -p /go/src/api
 WORKDIR /go/src/api
