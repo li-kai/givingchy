@@ -12,7 +12,7 @@ import (
 
 // Datastore defines all methods over models
 type Datastore interface {
-	AllProducts() ([]*Product, error)
+	AllProjects() ([]*Project, error)
 }
 
 // DB Wraps sql db for usage

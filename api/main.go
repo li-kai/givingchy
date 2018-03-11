@@ -27,21 +27,21 @@ func main() {
 		log.Panic(err)
 	}
 	env := &Env{db}
-	r.Get("/products", env.getProducts)
+	r.Get("/projects", env.getProjects)
 
 	port := os.Getenv("PORT")
 	log.Println("Running server at port " + port)
 	http.ListenAndServe(":"+port, r)
 }
 
-func (env *Env) getProducts(w http.ResponseWriter, r *http.Request) {
-	products, err := env.db.AllProducts()
+func (env *Env) getProjects(w http.ResponseWriter, r *http.Request) {
+	projects, err := env.db.AllProjects()
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, products)
+	respondWithJSON(w, http.StatusOK, projects)
 }
 
 /*
@@ -82,14 +82,14 @@ func (server *Server) Run(port string) {
 
 func (server *Server) initializeRoutes() {
 	server.Router.HandleFunc("/healthcheck", healthCheck).Methods("GET")
-	server.Router.HandleFunc("/products", server.getProducts).Methods("GET")
-	server.Router.HandleFunc("/product", server.createProduct).Methods("POST")
-	server.Router.HandleFunc("/product/{id:[0-9]+}", server.getProduct).Methods("GET")
-	server.Router.HandleFunc("/product/{id:[0-9]+}", server.updateProduct).Methods("PUT")
-	server.Router.HandleFunc("/product/{id:[0-9]+}", server.deleteProduct).Methods("DELETE")
+	server.Router.HandleFunc("/projects", server.getProjects).Methods("GET")
+	server.Router.HandleFunc("/project", server.createProject).Methods("POST")
+	server.Router.HandleFunc("/project/{id:[0-9]+}", server.getProject).Methods("GET")
+	server.Router.HandleFunc("/project/{id:[0-9]+}", server.updateProject).Methods("PUT")
+	server.Router.HandleFunc("/project/{id:[0-9]+}", server.deleteProject).Methods("DELETE")
 }
 
-func (server *Server) getProducts(w http.ResponseWriter, r *http.Request) {
+func (server *Server) getProjects(w http.ResponseWriter, r *http.Request) {
 	count, _ := strconv.Atoi(r.FormValue("count"))
 	start, _ := strconv.Atoi(r.FormValue("start"))
 
@@ -100,17 +100,17 @@ func (server *Server) getProducts(w http.ResponseWriter, r *http.Request) {
 		start = 0
 	}
 
-	products, err := getProducts(server.DB, start, count)
+	projects, err := getProjects(server.DB, start, count)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, products)
+	respondWithJSON(w, http.StatusOK, projects)
 }
 
-func (server *Server) createProduct(w http.ResponseWriter, r *http.Request) {
-	var p product
+func (server *Server) createProject(w http.ResponseWriter, r *http.Request) {
+	var p project
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&p); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
@@ -118,7 +118,7 @@ func (server *Server) createProduct(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	if err := p.createProduct(server.DB); err != nil {
+	if err := p.createProject(server.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -126,19 +126,19 @@ func (server *Server) createProduct(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusCreated, p)
 }
 
-func (server *Server) getProduct(w http.ResponseWriter, r *http.Request) {
+func (server *Server) getProject(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid product ID")
+		respondWithError(w, http.StatusBadRequest, "Invalid project ID")
 		return
 	}
 
-	p := product{ID: id}
-	if err := p.getProduct(server.DB); err != nil {
+	p := project{ID: id}
+	if err := p.getProject(server.DB); err != nil {
 		switch err {
 		case sql.ErrNoRows:
-			respondWithError(w, http.StatusNotFound, "Product not found")
+			respondWithError(w, http.StatusNotFound, "Project not found")
 		default:
 			respondWithError(w, http.StatusInternalServerError, err.Error())
 		}
@@ -148,15 +148,15 @@ func (server *Server) getProduct(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, p)
 }
 
-func (server *Server) updateProduct(w http.ResponseWriter, r *http.Request) {
+func (server *Server) updateProject(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid product ID")
+		respondWithError(w, http.StatusBadRequest, "Invalid project ID")
 		return
 	}
 
-	var p product
+	var p project
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&p); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid resquest payload")
@@ -165,7 +165,7 @@ func (server *Server) updateProduct(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	p.ID = id
 
-	if err := p.updateProduct(server.DB); err != nil {
+	if err := p.updateProject(server.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -173,16 +173,16 @@ func (server *Server) updateProduct(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, p)
 }
 
-func (server *Server) deleteProduct(w http.ResponseWriter, r *http.Request) {
+func (server *Server) deleteProject(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid Product ID")
+		respondWithError(w, http.StatusBadRequest, "Invalid Project ID")
 		return
 	}
 
-	p := product{ID: id}
-	if err := p.deleteProduct(server.DB); err != nil {
+	p := project{ID: id}
+	if err := p.deleteProject(server.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}

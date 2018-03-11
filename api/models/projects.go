@@ -1,61 +1,78 @@
 package models
 
-// Product represents one project
-type Product struct {
-	ID    int     `json:"id"`
-	Name  string  `json:"name"`
-	Price float64 `json:"price"`
+// Project represents one project
+type Project struct {
+	ID          int    `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	StartTime   string `json:"startTime"`
+	EndTime     string `json:"endTime"`
+	Verified    bool   `json:"verified"`
+	Category    string `json:"category`
+	UserID      int    `json:"userId"`
 }
 
-// AllProducts gets all products in db
-func (db *DB) AllProducts() ([]*Product, error) {
-	rows, err := db.Query("SELECT id, name, price FROM products ")
+// AllProjects gets all projects in db
+func (db *DB) AllProjects() ([]*Project, error) {
+	rows, err := db.Query(`
+        SELECT id, title, description, start_time, end_time,
+               verified, category, user_id
+        FROM projects`)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	products := []*Product{}
+	projects := []*Project{}
 	for rows.Next() {
-		var p Product
-		if err := rows.Scan(&p.ID, &p.Name, &p.Price); err != nil {
+		var p Project
+		if err := rows.Scan(
+			&p.ID,
+			&p.Title,
+			&p.Description,
+			&p.StartTime,
+			&p.EndTime,
+			&p.Verified,
+			&p.Category,
+			&p.UserID,
+		); err != nil {
 			return nil, err
 		}
-		products = append(products, &p)
+		projects = append(projects, &p)
 	}
 
-	return products, nil
+	return projects, nil
 }
 
 /*
-func (p *product) getProduct(db *sql.DB) error {
-	return db.QueryRow("SELECT name, price FROM products WHERE id=$1",
+func (p *project) getProject(db *sql.DB) error {
+	return db.QueryRow("SELECT name, price FROM projects WHERE id=$1",
 		p.ID).Scan(&p.Name, &p.Price)
 }
 
-func (p *product) updateProduct(db *sql.DB) error {
+func (p *project) updateProject(db *sql.DB) error {
 	_, err :=
-		db.Exec("UPDATE products SET name=$1, price=$2 WHERE id=$3",
+		db.Exec("UPDATE projects SET name=$1, price=$2 WHERE id=$3",
 			p.Name, p.Price, p.ID)
 
 	return err
 }
 
-func (p *product) deleteProduct(db *sql.DB) error {
-	_, err := db.Exec("DELETE FROM products WHERE id=$1", p.ID)
+func (p *project) deleteProject(db *sql.DB) error {
+	_, err := db.Exec("DELETE FROM projects WHERE id=$1", p.ID)
 
 	return err
 }
 
-func (p *product) createProduct(db *sql.DB) error {
+func (p *project) createProject(db *sql.DB) error {
 	return db.QueryRow(
-		"INSERT INTO products(name, price) VALUES($1, $2) RETURNING id",
+		"INSERT INTO projects(name, price) VALUES($1, $2) RETURNING id",
 		p.Name, p.Price).Scan(&p.ID)
 }
 
-func getProducts(db *sql.DB, start, count int) ([]product, error) {
+func getProjects(db *sql.DB, start, count int) ([]project, error) {
 	rows, err := db.Query(
-		"SELECT id, name,  price FROM products LIMIT $1 OFFSET $2",
+		"SELECT id, name,  price FROM projects LIMIT $1 OFFSET $2",
 		count, start)
 
 	if err != nil {
@@ -64,16 +81,16 @@ func getProducts(db *sql.DB, start, count int) ([]product, error) {
 
 	defer rows.Close()
 
-	products := []product{}
+	projects := []project{}
 
 	for rows.Next() {
-		var p product
+		var p project
 		if err := rows.Scan(&p.ID, &p.Name, &p.Price); err != nil {
 			return nil, err
 		}
-		products = append(products, p)
+		projects = append(projects, p)
 	}
 
-	return products, nil
+	return projects, nil
 }
 */
