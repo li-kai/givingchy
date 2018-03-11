@@ -35,7 +35,7 @@ services:
       - .env
     volumes:
       - ./postgres-data/postgres:/var/lib/postgresql/data
-      - ./db/seed.sql:/docker-entrypoint-initdb.d/seed.sql
+      - ./db:/docker-entrypoint-initdb.d
     ports:
       - 5432:5432
 

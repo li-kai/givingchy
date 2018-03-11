@@ -1,3 +1,4 @@
+CREATE EXTENSION citext;
 CREATE EXTENSION pgcrypto;
 
 CREATE TABLE IF NOT EXISTS users (
@@ -19,22 +20,22 @@ CREATE TABLE IF NOT EXISTS projects (
     start_time TIMESTAMP NOT NULL DEFAULT now(),
     end_time TIMESTAMP NOT NULL CHECK (start_time <= end_time),
     verified BOOLEAN NOT NULL DEFAULT FALSE,
-    category CITEXT REFERENCES categories (id) ON UPDATE CASCADE,
-    user_id INTEGER REFERENCES users (id) ON UPDATE CASCADE
+    category CITEXT NOT NULL REFERENCES categories (name) ON UPDATE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users (id) ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS funds (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users (id) ON UPDATE CASCADE,
-    project_id INTEGER REFERENCES projects (id) ON UPDATE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users (id) ON UPDATE CASCADE,
+    project_id INTEGER NOT NULL REFERENCES projects (id) ON UPDATE CASCADE,
     moment TIMESTAMP NOT NULL DEFAULT now(),
     amount NUMERIC(10, 2) NOT NULL CHECK (amount > 0) --10 sf, 2dp--
 );
 
 CREATE TABLE IF NOT EXISTS comments (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users (id) ON UPDATE CASCADE,
-    project_id INTEGER REFERENCES projects (id) ON UPDATE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users (id) ON UPDATE CASCADE,
+    project_id INTEGER NOT NULL REFERENCES projects (id) ON UPDATE CASCADE,
     moment TIMESTAMP NOT NULL DEFAULT now(),
     content TEXT NOT NULL
 );
@@ -48,3 +49,5 @@ PREPARE select_user (TEXT, VARCHAR) AS
     SELECT id, email, is_admin FROM users
     WHERE email = $1
     AND password = crypt($2, password);
+
+\copy users FROM '/docker-entrypoint-initdb.d/users.csv' CSV HEADER;
