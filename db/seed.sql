@@ -1,7 +1,50 @@
-CREATE TABLE IF NOT EXISTS products
-(
-    id SERIAL,
-    name TEXT NOT NULL,
-    price NUMERIC(10,2) NOT NULL DEFAULT 0.00,
-    CONSTRAINT products_pkey PRIMARY KEY (id)
+CREATE EXTENSION pgcrypto;
+
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    email CITEXT UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    is_admin BOOLEAN NOT NULL DEFAULT FALSE
 );
+
+CREATE TABLE IF NOT EXISTS categories (
+    id SERIAL PRIMARY KEY,
+    name CITEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS projects (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    description TEXT NOT NULL,
+    start_time TIMESTAMP NOT NULL DEFAULT now(),
+    end_time TIMESTAMP NOT NULL CHECK (start_time <= end_time),
+    verified BOOLEAN NOT NULL DEFAULT FALSE,
+    category CITEXT REFERENCES categories (id) ON UPDATE CASCADE,
+    user_id INTEGER REFERENCES users (id) ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS funds (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users (id) ON UPDATE CASCADE,
+    project_id INTEGER REFERENCES projects (id) ON UPDATE CASCADE,
+    moment TIMESTAMP NOT NULL DEFAULT now(),
+    amount NUMERIC(10, 2) NOT NULL CHECK (amount > 0) --10 sf, 2dp--
+);
+
+CREATE TABLE IF NOT EXISTS comments (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users (id) ON UPDATE CASCADE,
+    project_id INTEGER REFERENCES projects (id) ON UPDATE CASCADE,
+    moment TIMESTAMP NOT NULL DEFAULT now(),
+    content TEXT NOT NULL
+);
+
+-- SOURCE: https://www.meetspaceapp.com/2016/04/12/passwords-postgresql-pgcrypto.html
+PREPARE create_user (TEXT, VARCHAR) AS
+    INSERT INTO users (email, password)
+    VALUES($1, crypt($2, gen_salt('bf', 8)));
+
+PREPARE select_user (TEXT, VARCHAR) AS
+    SELECT id, email, is_admin FROM users
+    WHERE email = $1
+    AND password = crypt($2, password);
