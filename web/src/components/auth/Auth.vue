@@ -42,6 +42,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'auth',
   props: {
@@ -86,7 +88,11 @@ export default {
   },
   methods: {
     submit() {
-      // auth.login(this, this.credentials, 'secretquote');
+      axios.post('/api/user', this.credentials).then((res) => {
+          console.log('created user!');
+      }).catch((err) => {
+          console.error(err);
+      });
     }
   }
 };

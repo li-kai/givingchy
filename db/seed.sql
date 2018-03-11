@@ -51,3 +51,5 @@ PREPARE select_user (TEXT, VARCHAR) AS
     AND password = crypt($2, password);
 
 \copy users FROM '/docker-entrypoint-initdb.d/users.csv' CSV HEADER;
+-- SOURCE: https://stackoverflow.com/a/3698777
+SELECT setval(pg_get_serial_sequence('users', 'id'), coalesce(max(id),0) + 1, false) FROM users;

@@ -28,6 +28,8 @@ func main() {
 	}
 	env := &Env{db}
 	r.Get("/projects", env.getProjects)
+	r.Post("/user", env.createUser)
+	r.Get("/users", env.getUsers)
 
 	port := os.Getenv("PORT")
 	log.Println("Running server at port " + port)
@@ -42,6 +44,38 @@ func (env *Env) getProjects(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respondWithJSON(w, http.StatusOK, projects)
+}
+
+func (env *Env) getUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := env.db.AllUsers()
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, users)
+}
+s
+type userRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+func (env *Env) createUser(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var u userRequest
+	err := decoder.Decode(&u)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	userID, err := env.db.CreateUser(u.Email, u.Password)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusCreated, userID)
 }
 
 /*

@@ -13,6 +13,9 @@ import (
 // Datastore defines all methods over models
 type Datastore interface {
 	AllProjects() ([]*Project, error)
+	AllUsers() ([]*User, error)
+	GetUser(email string, password string) (*User, error)
+	CreateUser(email string, password string) (int, error)
 }
 
 // DB Wraps sql db for usage
