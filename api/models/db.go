@@ -16,6 +16,8 @@ type Datastore interface {
 	AllUsers() ([]*User, error)
 	GetUser(email string, password string) (*User, error)
 	CreateUser(email string, password string) (int, error)
+	AllCategories() ([]*Category, error)
+	CreateCategory(name string) error
 }
 
 // DB Wraps sql db for usage
