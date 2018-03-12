@@ -9,8 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS categories (
-    id SERIAL PRIMARY KEY,
-    name CITEXT UNIQUE NOT NULL
+    name CITEXT UNIQUE PRIMARY KEY
 );
 
 CREATE TABLE IF NOT EXISTS projects (
@@ -50,6 +49,7 @@ PREPARE select_user (TEXT, VARCHAR) AS
     WHERE email = $1
     AND password = crypt($2, password);
 
+\copy categories FROM '/docker-entrypoint-initdb.d/categories.csv' CSV HEADER;
 \copy users FROM '/docker-entrypoint-initdb.d/users.csv' CSV HEADER;
 -- SOURCE: https://stackoverflow.com/a/3698777
 SELECT setval(pg_get_serial_sequence('users', 'id'), coalesce(max(id),0) + 1, false) FROM users;
