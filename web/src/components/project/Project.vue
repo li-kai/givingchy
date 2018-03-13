@@ -46,8 +46,7 @@ export default {
   },
   computed: {
     timeLeft() {
-      const secondsLeft =
-        Date.now() - this.project.startDate + this.project.duration;
+      const secondsLeft = Date.now() - this.project.startDate + this.project.duration;
       const minutesLeft = secondsLeft / 60;
       if (minutesLeft < 60) return `${Math.round(minutesLeft)} minutes`;
       const hoursLeft = minutesLeft / 60;
@@ -61,8 +60,7 @@ export default {
       return parseFloat(twoDecimalPlaces);
     },
     fundingStatus() {
-      const secondsLeft =
-        Date.now() - this.project.startDate + this.project.duration;
+      const secondsLeft = Date.now() - this.project.startDate + this.project.duration;
       if (secondsLeft < 0) return 'exception';
       return this.fundingPercentage >= 100 ? 'success' : '';
     },

@@ -25,7 +25,7 @@ const KEYS = new Set([
   'duration',
   'keywords',
   'fundingRequired',
-  'fundingRaised'
+  'fundingRaised',
 ]);
 export default {
   name: 'card',
@@ -36,20 +36,19 @@ export default {
           return false;
         }
         const objectKeys = Object.keys(value);
-        objectKeys.forEach(key => {
+        objectKeys.forEach((key) => {
           if (!KEYS.has(key)) {
             return false;
           }
         });
         return true;
       },
-      required: true
-    }
+      required: true,
+    },
   },
   computed: {
     timeLeft() {
-      const secondsLeft =
-        Date.now() - this.project.startDate + this.project.duration;
+      const secondsLeft = Date.now() - this.project.startDate + this.project.duration;
       const minutesLeft = secondsLeft / 60;
       if (minutesLeft < 60) return `${Math.round(minutesLeft)} minutes`;
       const hoursLeft = minutesLeft / 60;
@@ -59,8 +58,8 @@ export default {
     },
     projectPath() {
       return { name: 'projects', params: { id: this.project.id } };
-    }
-  }
+    },
+  },
 };
 </script>
 

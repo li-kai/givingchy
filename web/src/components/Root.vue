@@ -11,25 +11,28 @@
 
 <script>
 import Card from './Card.vue';
-import projects from '../fixtures';
+import { projects } from '../fixtures';
 import axios from 'axios';
 
 export default {
   name: 'root',
   components: {
-    Card
+    Card,
   },
   data() {
     return {
-      projects
+      projects,
     };
   },
   created() {
-    axios.get('api/projects').then((res) => {
-      console.log(res.data);
-      this.projects = res.data;
-    }).catch((err) => console.error(err));
-  }
+    axios
+      .get('api/projects')
+      .then((res) => {
+        console.log(res.data);
+        this.projects = res.data;
+      })
+      .catch((err) => console.error(err));
+  },
 };
 </script>
 

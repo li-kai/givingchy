@@ -6,6 +6,6 @@
 import Auth from './Auth';
 export default {
   name: 'login',
-  components: { Auth }
+  components: { Auth },
 };
 </script>

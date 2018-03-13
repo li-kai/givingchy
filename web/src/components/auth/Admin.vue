@@ -27,30 +27,30 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
 
 export default {
-  name: "auth",
+  name: 'auth',
   data() {
     return {
-      users: []
+      users: [],
     };
   },
-  methods: {
-  },
+  methods: {},
   created() {
     axios
-      .get("/api/users", this.credentials)
-      .then(res => {
+      .get('/api/users', this.credentials)
+      .then((res) => {
         console.log(res.data[0].isAdmin);
         this.users = res.data;
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
       });
-  }
+  },
 };
 </script>
 
 <style scoped>
+
 </style>

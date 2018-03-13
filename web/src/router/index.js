@@ -1,58 +1,58 @@
-import Vue from "vue";
-import Router from "vue-router";
-import Auth from "../auth";
-import Root from "../components/Root";
-import Project from "../components/project/Project";
-import NewProject from "../components/project/New";
-import Admin from "../components/auth/Admin";
-import Login from "../components/auth/Login";
-import SignUp from "../components/auth/SignUp";
+import Vue from 'vue';
+import Router from 'vue-router';
+import Auth from '../auth';
+import Root from '../components/Root';
+import Project from '../components/project/Project';
+import NewProject from '../components/project/New';
+import Admin from '../components/auth/Admin';
+import Login from '../components/auth/Login';
+import SignUp from '../components/auth/SignUp';
 
 Vue.use(Router);
 const requiresAuth = true;
 
 const router = new Router({
-  mode: "history",
+  mode: 'history',
   routes: [
     {
-      path: "/",
+      path: '/',
       component: Root,
-      alias: "/projects"
+      alias: '/projects',
     },
     {
-      path: "/projects/new",
+      path: '/projects/new',
       component: NewProject,
-      meta: { requiresAuth }
+      meta: { requiresAuth },
     },
     {
-      path: "/projects/:id",
+      path: '/projects/:id',
       component: Project,
-      name: "projects"
+      name: 'projects',
     },
     {
-      path: "/login",
-      component: Login
+      path: '/login',
+      component: Login,
     },
     {
-      path: "/signup",
-      component: SignUp
+      path: '/signup',
+      component: SignUp,
     },
     {
-      path: "/admin",
+      path: '/admin',
       component: Admin,
-      meta: { requiresAuth }
-    }
-  ]
+      meta: { requiresAuth },
+    },
+  ],
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
     // this route requires auth, check if logged in
     // if not, redirect to login page.
     if (!Auth.loggedIn()) {
       next({
-        path: "/login",
-        query: { redirect: to.fullPath }
+        path: '/login',
+        query: { redirect: to.fullPath },
       });
       return;
     }

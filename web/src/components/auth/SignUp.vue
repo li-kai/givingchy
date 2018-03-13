@@ -6,6 +6,6 @@
 import Auth from './Auth';
 export default {
   name: 'signup',
-  components: { Auth }
+  components: { Auth },
 };
 </script>

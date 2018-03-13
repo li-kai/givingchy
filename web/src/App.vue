@@ -17,26 +17,26 @@
 
 <script>
 export default {
-  name: 'app'
+  name: 'app',
 };
 </script>
 
 <style>
 #app {
-  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
-    'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+    '微软雅黑', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-	font-size: 14px;
+  font-size: 14px;
   color: #2c3e50;
 }
 h1 {
-	font-size: 20px;
+  font-size: 20px;
 }
 h2 {
-	font-size: 18px;
+  font-size: 18px;
 }
 .el-menu--horizontal > .el-menu-item.auth {
-	float: right;
+  float: right;
 }
 </style>

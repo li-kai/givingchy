@@ -49,8 +49,8 @@ export default {
   props: {
     isLogin: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
@@ -58,43 +58,46 @@ export default {
       // properties that will be used in it
       credentials: {
         username: '',
-        password: ''
+        password: '',
       },
       rules: {
         username: [
           {
             required: true,
             message: 'Please enter your username',
-            trigger: 'blur'
+            trigger: 'blur',
           },
-          { min: 3, message: 'Must be at least 3 characters', trigger: 'blur' }
+          { min: 3, message: 'Must be at least 3 characters', trigger: 'blur' },
         ],
         password: [
           {
             required: true,
             message: 'Please enter your password',
-            trigger: 'blur'
+            trigger: 'blur',
           },
           {
             min: 8,
             max: 100,
             message: 'Must be between 8 and 100 characters',
-            trigger: 'blur'
-          }
-        ]
+            trigger: 'blur',
+          },
+        ],
       },
-      error: ''
+      error: '',
     };
   },
   methods: {
     submit() {
-      axios.post('/api/user', this.credentials).then((res) => {
+      axios
+        .post('/api/user', this.credentials)
+        .then(() => {
           console.log('created user!');
-      }).catch((err) => {
+        })
+        .catch((err) => {
           console.error(err);
-      });
-    }
-  }
+        });
+    },
+  },
 };
 </script>
 
