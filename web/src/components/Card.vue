@@ -17,38 +17,16 @@
 </template>
 
 <script>
-const KEYS = new Set([
-  'id',
-  'title',
-  'description',
-  'startDate',
-  'duration',
-  'keywords',
-  'fundingRequired',
-  'fundingRaised',
-]);
 export default {
   name: 'card',
   props: {
     project: {
-      validator(value) {
-        if (typeof value !== 'object') {
-          return false;
-        }
-        const objectKeys = Object.keys(value);
-        objectKeys.forEach((key) => {
-          if (!KEYS.has(key)) {
-            return false;
-          }
-        });
-        return true;
-      },
       required: true,
     },
   },
   computed: {
     timeLeft() {
-      const secondsLeft = Date.now() - this.project.startDate + this.project.duration;
+      const secondsLeft = (new Date(this.project.endTime) - Date.now()) / 1000;
       const minutesLeft = secondsLeft / 60;
       if (minutesLeft < 60) return `${Math.round(minutesLeft)} minutes`;
       const hoursLeft = minutesLeft / 60;
