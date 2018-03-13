@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 // Project represents one project
 type Project struct {
@@ -11,7 +13,7 @@ type Project struct {
 	EndTime        time.Time `json:"endTime"`
 	Verified       bool      `json:"verified"`
 	AmountRequired float64   `json:"amountRequired"`
-	AmountRaised   float64   `json:"amountRequired"`
+	AmountRaised   float64   `json:"amountRaised"`
 	Category       string    `json:"category"`
 	UserID         int       `json:"userId"`
 }
@@ -37,22 +39,22 @@ func (db *DB) AllProjects() ([]*Project, error) {
 
 	projects := []*Project{}
 	for rows.Next() {
-		var p Project
+		var project Project
 		if err := rows.Scan(
-			&p.ID,
-			&p.Title,
-			&p.Description,
-			&p.StartTime,
-			&p.EndTime,
-			&p.AmountRequired,
-			&p.AmountRaised,
-			&p.Verified,
-			&p.Category,
-			&p.UserID,
+			&project.ID,
+			&project.Title,
+			&project.Description,
+			&project.StartTime,
+			&project.EndTime,
+			&project.AmountRequired,
+			&project.AmountRaised,
+			&project.Verified,
+			&project.Category,
+			&project.UserID,
 		); err != nil {
 			return nil, err
 		}
-		projects = append(projects, &p)
+		projects = append(projects, &project)
 	}
 
 	return projects, nil
@@ -77,10 +79,38 @@ func (db *DB) CreateProject(
 	return id, err
 }
 
+// GetProject returns all relevant data pertaining to the project
+func (db *DB) GetProject(id string) (*Project, error) {
+	var project Project
+	err := db.QueryRow(`
+        SELECT p.id, p.title, p.description,
+               p.start_time, p.end_time,
+               p.amount_required, COALESCE(SUM(f.amount), 0) as amount_raised,
+               p.verified, p.category, p.user_id
+        FROM projects p LEFT OUTER JOIN funds f
+        ON p.user_id = f.user_id
+        WHERE p.id = $1
+        GROUP BY p.id, p.user_id
+    `, id,
+	).Scan(
+		&project.ID,
+		&project.Title,
+		&project.Description,
+		&project.StartTime,
+		&project.EndTime,
+		&project.AmountRequired,
+		&project.AmountRaised,
+		&project.Verified,
+		&project.Category,
+		&project.UserID,
+	)
+	return &project, err
+}
+
 /*
 func (p *project) getProject(db *sql.DB) error {
 	return db.QueryRow("SELECT name, price FROM projects WHERE id=$1",
-		p.ID).Scan(&p.Name, &p.Price)
+		p.ID).Scan(&project.Name, &project.Price)
 }
 
 func (p *project) updateProject(db *sql.DB) error {
@@ -100,7 +130,7 @@ func (p *project) deleteProject(db *sql.DB) error {
 func (p *project) createProject(db *sql.DB) error {
 	return db.QueryRow(
 		"INSERT INTO projects(name, price) VALUES($1, $2) RETURNING id",
-		p.Name, p.Price).Scan(&p.ID)
+		p.Name, p.Price).Scan(&project.ID)
 }
 
 func getProjects(db *sql.DB, start, count int) ([]project, error) {
@@ -118,7 +148,7 @@ func getProjects(db *sql.DB, start, count int) ([]project, error) {
 
 	for rows.Next() {
 		var p project
-		if err := rows.Scan(&p.ID, &p.Name, &p.Price); err != nil {
+		if err := rows.Scan(&project.ID, &project.Name, &project.Price); err != nil {
 			return nil, err
 		}
 		projects = append(projects, p)

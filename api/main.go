@@ -29,6 +29,7 @@ func main() {
 	}
 	env := &Env{db}
 	r.Get("/projects", env.getProjects)
+	r.Get("/projects/{id}", env.getProject)
 	r.Post("/project", env.createProject)
 	r.Post("/user", env.createUser)
 	r.Get("/users", env.getUsers)
@@ -48,6 +49,21 @@ func (env *Env) getProjects(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respondWithJSON(w, http.StatusOK, projects)
+}
+
+func (env *Env) getProject(w http.ResponseWriter, r *http.Request) {
+	projectID := chi.URLParam(r, "id")
+	if projectID == "" {
+		respondWithError(w, http.StatusNotFound, "No such project id")
+		return
+	}
+	project, err := env.db.GetProject(projectID)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, project)
 }
 
 type projectRequest struct {

@@ -22,6 +22,7 @@ type Datastore interface {
 		category string,
 		userID int,
 	) (int, error)
+	GetProject(id string) (*Project, error)
 
 	AllUsers() ([]*User, error)
 	GetUser(email string, password string) (*User, error)
