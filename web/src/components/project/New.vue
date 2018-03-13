@@ -29,11 +29,21 @@
           :picker-options="pickerOptions">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="Funding required" prop="fundingRequired">
+      <el-form-item label="Funding required" prop="amountRequired">
         <el-input-number
-          v-model="project.fundingRequired"
+          v-model="project.amountRequired"
           :min="1" :max="10000">
         </el-input-number>
+      </el-form-item>
+      <el-form-item label="Category" prop="category">
+        <el-select v-model="project.category" placeholder="Select category">
+          <el-option
+            v-for="item in categories"
+            :key="item.name"
+            :label="item.name"
+            :value="item.name">
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submit()">
@@ -46,6 +56,7 @@
 
 <script>
 import axios from 'axios';
+import { categories } from '../../fixtures';
 
 export default {
   name: 'new',
@@ -55,10 +66,11 @@ export default {
         title: '',
         description: '',
         endTime: '',
-        fundingRequired: 1,
+        amountRequired: 1,
         userId: 1,
+        category: '',
       },
-      categories: [],
+      categories,
       rules: {
         title: [
           {
@@ -87,7 +99,12 @@ export default {
             trigger: 'blur',
           },
         ],
-        fundingRequired: [
+        amountRequired: [
+          {
+            required: true,
+          },
+        ],
+        category: [
           {
             required: true,
           },
@@ -121,14 +138,16 @@ export default {
     axios
       .get('/api/categories')
       .then((res) => {
-        console.log(res.data);
-        this.categories = res.data.map((cat) => cat.name);
+        this.categories = res.data;
       })
       .catch((err) => console.error(err));
   },
   methods: {
     submit() {
-      // TODO: sent to server side
+      axios.post('/api/project', this.project).then((res) => {
+        this.$router.push({ path: `/projects/${res.data}` });
+      })
+      .catch((err) => console.error(err));
     },
   },
 };

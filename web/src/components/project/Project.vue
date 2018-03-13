@@ -19,10 +19,10 @@
     <el-row>
       <el-col>
         <p>
-          Started on {{ new Date(project.startDate).toLocaleString() }}
+          Started on {{ new Date(project.startTime).toLocaleString() }}
         </p>
         <p>
-          Closes in {{ timeLeft }}
+          {{ timeLeft }}
         </p>
         <el-slider :max="1000" v-model="fundingAmount" show-input></el-slider>
         <el-button type="primary" @click="submit()">
@@ -35,35 +35,48 @@
 </template>
 
 <script>
-import projects from '../../fixtures';
+import axios from 'axios';
+import { projects } from '../../fixtures';
+
 export default {
   name: 'project',
   data() {
     return {
-      project: projects[this.$route.params.id],
+      project: projects[0],
       fundingAmount: 0,
     };
   },
   computed: {
     timeLeft() {
-      const secondsLeft = Date.now() - this.project.startDate + this.project.duration;
+      const secondsLeft = (new Date(this.project.endTime) - Date.now()) / 1000
       const minutesLeft = secondsLeft / 60;
-      if (minutesLeft < 60) return `${Math.round(minutesLeft)} minutes`;
+      if (minutesLeft < 60) return `Closes in ${Math.round(minutesLeft)} minutes`;
       const hoursLeft = minutesLeft / 60;
-      if (hoursLeft < 24) return `${Math.round(hoursLeft)} hours`;
+      if (hoursLeft < 24) return `Closes in ${Math.round(hoursLeft)} hours`;
       const daysLeft = hoursLeft / 24;
-      return `${Math.round(daysLeft)} days`;
+      if (daysLeft > 0) {
+        return `Closes in ${Math.round(daysLeft)} days`;
+      }
+      return 'Project has ended';
     },
     fundingPercentage() {
-      const { fundingRaised, fundingRequired } = this.project;
-      const twoDecimalPlaces = (fundingRaised / fundingRequired * 100).toFixed(2);
+      const { amountRaised, amountRequired } = this.project;
+      const twoDecimalPlaces = (amountRaised / amountRequired * 100).toFixed(2);
       return parseFloat(twoDecimalPlaces);
     },
     fundingStatus() {
-      const secondsLeft = Date.now() - this.project.startDate + this.project.duration;
+      const secondsLeft = Date.now() - this.project.endTime;
       if (secondsLeft < 0) return 'exception';
       return this.fundingPercentage >= 100 ? 'success' : '';
     },
+  },
+  created() {
+    axios
+      .get(`/api/projects/${this.$route.params.id}`)
+      .then((res) => {
+        this.project = res.data;
+      })
+      .catch((err) => console.error(err));
   },
   methods: {
     submit() {
