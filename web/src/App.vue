@@ -4,6 +4,7 @@
 			<el-menu mode="horizontal" :router="true" :default-active="$route.path">
 				<el-menu-item index="/">Home</el-menu-item>
 				<el-menu-item index="/projects/new">New Project</el-menu-item>
+        <el-menu-item index="/admin" class="auth">Admin</el-menu-item>
 				<el-menu-item index="/signup" class="auth">Sign Up</el-menu-item>
 				<el-menu-item index="/login" class="auth">Login</el-menu-item>
 			</el-menu>
