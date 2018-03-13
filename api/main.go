@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"api/models"
 
@@ -28,6 +29,7 @@ func main() {
 	}
 	env := &Env{db}
 	r.Get("/projects", env.getProjects)
+	r.Post("/project", env.createProject)
 	r.Post("/user", env.createUser)
 	r.Get("/users", env.getUsers)
 	r.Get("/categories", env.getCategories)
@@ -46,6 +48,37 @@ func (env *Env) getProjects(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respondWithJSON(w, http.StatusOK, projects)
+}
+
+type projectRequest struct {
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	EndTime     time.Time `json:"endTime"`
+	Category    string    `json:"category"`
+	UserID      int       `json:"userId"`
+}
+
+func (env *Env) createProject(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var project projectRequest
+	err := decoder.Decode(&project)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	projectID, err := env.db.CreateProject(
+		project.Title,
+		project.Description,
+		project.EndTime,
+		project.Category,
+		project.UserID,
+	)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusCreated, projectID)
 }
 
 func (env *Env) getUsers(w http.ResponseWriter, r *http.Request) {

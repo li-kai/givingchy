@@ -1,15 +1,17 @@
 package models
 
+import "time"
+
 // Project represents one project
 type Project struct {
-	ID          int    `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	StartTime   string `json:"startTime"`
-	EndTime     string `json:"endTime"`
-	Verified    bool   `json:"verified"`
-	Category    string `json:"category`
-	UserID      int    `json:"userId"`
+	ID          int       `json:"id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	StartTime   time.Time `json:"startTime"`
+	EndTime     time.Time `json:"endTime"`
+	Verified    bool      `json:"verified"`
+	Category    string    `json:"category"`
+	UserID      int       `json:"userId"`
 }
 
 // AllProjects gets all projects in db
@@ -42,6 +44,18 @@ func (db *DB) AllProjects() ([]*Project, error) {
 	}
 
 	return projects, nil
+}
+
+// CreateProject creates a funding project
+func (db *DB) CreateProject(title string, description string, endTime time.Time, category string, userID int) (int, error) {
+	id := 0
+	err := db.QueryRow(`
+        INSERT INTO projects (title, description, end_time, category, user_id)
+        VALUES($1, $2, $3, $4, $5)
+        RETURNING id
+    `, title, description, endTime, category, userID,
+	).Scan(&id)
+	return id, err
 }
 
 /*
