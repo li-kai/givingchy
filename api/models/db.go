@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -13,7 +14,14 @@ import (
 // Datastore defines all methods over models
 type Datastore interface {
 	AllProjects() ([]*Project, error)
-	CreateProject(title string, description string, endTime time.Time, category string, userID int) (int, error)
+	CreateProject(
+		title string,
+		description string,
+		amountRequired float64,
+		endTime time.Time,
+		category string,
+		userID int,
+	) (int, error)
 
 	AllUsers() ([]*User, error)
 	GetUser(email string, password string) (*User, error)
@@ -39,7 +47,8 @@ func NewDB() (*DB, error) {
 	var db *sql.DB
 	var err error
 	// Try to connect every second
-	for i := 0; i < 15; i++ {
+	for i := 0; i < 30; i++ {
+		log.Printf("Attempting connection: %d", i)
 		db, err = sql.Open("postgres", connectionString)
 		if err == nil {
 			break

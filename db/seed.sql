@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS projects (
     description TEXT NOT NULL,
     start_time TIMESTAMP NOT NULL DEFAULT now(),
     end_time TIMESTAMP NOT NULL CHECK (start_time <= end_time),
+    amount_required NUMERIC(10, 2) NOT NULL CHECK (amount_required > 0), --10 sf, 2dp--
     verified BOOLEAN NOT NULL DEFAULT FALSE,
     category CITEXT NOT NULL REFERENCES categories (name) ON UPDATE CASCADE,
     user_id INTEGER NOT NULL REFERENCES users (id) ON UPDATE CASCADE

@@ -25,8 +25,9 @@ export default {
     };
   },
   created() {
-    axios.get('api/healthcheck').then((res) => {
-      console.log(res);
+    axios.get('api/projects').then((res) => {
+      console.log(res.data);
+      this.projects = res.data;
     }).catch((err) => console.error(err));
   }
 };

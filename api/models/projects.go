@@ -4,22 +4,32 @@ import "time"
 
 // Project represents one project
 type Project struct {
-	ID          int       `json:"id"`
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
-	StartTime   time.Time `json:"startTime"`
-	EndTime     time.Time `json:"endTime"`
-	Verified    bool      `json:"verified"`
-	Category    string    `json:"category"`
-	UserID      int       `json:"userId"`
+	ID             int       `json:"id"`
+	Title          string    `json:"title"`
+	Description    string    `json:"description"`
+	StartTime      time.Time `json:"startTime"`
+	EndTime        time.Time `json:"endTime"`
+	Verified       bool      `json:"verified"`
+	AmountRequired float64   `json:"amountRequired"`
+	AmountRaised   float64   `json:"amountRequired"`
+	Category       string    `json:"category"`
+	UserID         int       `json:"userId"`
 }
 
 // AllProjects gets all projects in db
 func (db *DB) AllProjects() ([]*Project, error) {
 	rows, err := db.Query(`
-        SELECT id, title, description, start_time, end_time,
-               verified, category, user_id
-        FROM projects`)
+        WITH total_funds AS (
+            SELECT user_id, sum(amount) AS raised
+            FROM funds
+            GROUP BY user_id
+        )
+        SELECT p.id, p.title, p.description,
+               p.start_time, p.end_time,
+               p.amount_required, COALESCE(f.raised, 0) as amount_raised,
+               p.verified, p.category, p.user_id
+        FROM projects p LEFT OUTER JOIN total_funds f
+        ON p.user_id = f.user_id`)
 	if err != nil {
 		return nil, err
 	}
@@ -34,6 +44,8 @@ func (db *DB) AllProjects() ([]*Project, error) {
 			&p.Description,
 			&p.StartTime,
 			&p.EndTime,
+			&p.AmountRequired,
+			&p.AmountRaised,
 			&p.Verified,
 			&p.Category,
 			&p.UserID,
@@ -47,13 +59,20 @@ func (db *DB) AllProjects() ([]*Project, error) {
 }
 
 // CreateProject creates a funding project
-func (db *DB) CreateProject(title string, description string, endTime time.Time, category string, userID int) (int, error) {
+func (db *DB) CreateProject(
+	title string,
+	description string,
+	amountRequired float64,
+	endTime time.Time,
+	category string,
+	userID int,
+) (int, error) {
 	id := 0
 	err := db.QueryRow(`
-        INSERT INTO projects (title, description, end_time, category, user_id)
-        VALUES($1, $2, $3, $4, $5)
+        INSERT INTO projects (title, description, amount_required, end_time, category, user_id)
+        VALUES($1, $2, $3, $4, $5, $6)
         RETURNING id
-    `, title, description, endTime, category, userID,
+    `, title, description, amountRequired, endTime, category, userID,
 	).Scan(&id)
 	return id, err
 }

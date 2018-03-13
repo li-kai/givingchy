@@ -51,11 +51,12 @@ func (env *Env) getProjects(w http.ResponseWriter, r *http.Request) {
 }
 
 type projectRequest struct {
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
-	EndTime     time.Time `json:"endTime"`
-	Category    string    `json:"category"`
-	UserID      int       `json:"userId"`
+	Title          string    `json:"title"`
+	Description    string    `json:"description"`
+	AmountRequired float64   `json:"amountRequired"`
+	EndTime        time.Time `json:"endTime"`
+	Category       string    `json:"category"`
+	UserID         int       `json:"userId"`
 }
 
 func (env *Env) createProject(w http.ResponseWriter, r *http.Request) {
@@ -69,6 +70,7 @@ func (env *Env) createProject(w http.ResponseWriter, r *http.Request) {
 	projectID, err := env.db.CreateProject(
 		project.Title,
 		project.Description,
+		project.AmountRequired,
 		project.EndTime,
 		project.Category,
 		project.UserID,
