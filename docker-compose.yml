@@ -1,4 +1,4 @@
-version: "3"
+version: "3.5"
 services:
   api:
     build:
@@ -41,9 +41,13 @@ services:
   proxy:
     image: nginx:alpine
     ports:
-      - "${HOST_PORT}:80"
+      - "80:80"
+      - "443:443"
     volumes:
       - ./proxy/nginx.conf:/etc/nginx/nginx.conf
+    secrets:
+      - "server.key"
+      - "server.crt"
     depends_on:
       - api
       - web
@@ -51,3 +55,9 @@ services:
 
 volumes:
   yarn:
+
+secrets:
+  "server.key":
+    file: ./proxy/server.key
+  "server.crt":
+    file: ./proxy/server.crt

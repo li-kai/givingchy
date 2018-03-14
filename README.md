@@ -3,6 +3,10 @@
 ## Setup
 
 ```sh
+# generate ssl cert and keys
+openssl req -x509 -newkey rsa:4096 -sha256 -nodes \
+    -keyout ./proxy/server.key -out ./proxy/server.crt \
+    -subj "/CN=localhost" -days 365
 # set up environment variables
 cp .env.example .env
 ```
