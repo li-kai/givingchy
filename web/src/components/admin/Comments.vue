@@ -8,18 +8,28 @@
     <el-table-column
       prop="id"
       label="ID"
+      width="50">
+    </el-table-column>
+    <el-table-column
+      prop="userId"
+      label="User ID"
       width="70">
     </el-table-column>
     <el-table-column
-      prop="email"
-      label="Email">
+      prop="content"
+      label="Content">
     </el-table-column>
     <el-table-column
-      prop="isAdmin"
-      label="Type">
+      prop="createdAt"
+      label="Created At">
+      <date-time
+      slot-scope="scope"
+      :datetime="scope.row.createdAt"></date-time>
+    </el-table-column>
+    <el-table-column
+      label="Actions">
       <template slot-scope="scope">
-        <el-tag type="danger" v-if="scope.row.isAdmin">Admin</el-tag>
-        <div v-else>Comment</div>
+        <el-button type="danger" size="small">Delete</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -28,12 +38,16 @@
 
 <script>
 import axios from 'axios';
+import DateTime from './DateTime';
 
 export default {
   name: 'comments',
+  components: {
+    DateTime,
+  },
   data() {
     return {
-      comments: [],
+      rawComments: [],
     };
   },
   methods: {},
@@ -41,12 +55,17 @@ export default {
     axios
       .get('/api/comments', this.credentials)
       .then((res) => {
-        console.log(res.data[0].isAdmin);
-        this.comments = res.data;
+        this.rawComments = res.data;
       })
       .catch((err) => {
         console.error(err);
       });
+  },
+  computed: {
+    comments() {
+      return this.rawComments
+        .sort((a, b) => a.id - b.id);
+    },
   },
 };
 </script>

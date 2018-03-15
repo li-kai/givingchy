@@ -8,18 +8,29 @@
     <el-table-column
       prop="id"
       label="ID"
+      width="50">
+    </el-table-column>
+    <el-table-column
+      prop="userId"
+      label="User ID"
       width="70">
     </el-table-column>
     <el-table-column
-      prop="email"
-      label="Email">
+      prop="amount"
+      label="Paid">
+      <div></div>
     </el-table-column>
     <el-table-column
-      prop="isAdmin"
-      label="Type">
+      prop="paidAt"
+      label="Paid At">
+      <date-time
+      slot-scope="scope"
+      :datetime="scope.row.paidAt"></date-time>
+    </el-table-column>
+    <el-table-column
+      label="Actions">
       <template slot-scope="scope">
-        <el-tag type="danger" v-if="scope.row.isAdmin">Admin</el-tag>
-        <div v-else>Payment</div>
+        <el-button type="danger" size="small">Delete</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -28,20 +39,22 @@
 
 <script>
 import axios from 'axios';
+import DateTime from './DateTime';
 
 export default {
   name: 'payments',
+  components: {
+    DateTime,
+  },
   data() {
     return {
       payments: [],
     };
   },
-  methods: {},
   created() {
     axios
       .get('/api/payments', this.credentials)
       .then((res) => {
-        console.log(res.data[0].isAdmin);
         this.payments = res.data;
       })
       .catch((err) => {

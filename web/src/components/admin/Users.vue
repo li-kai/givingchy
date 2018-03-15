@@ -8,7 +8,7 @@
     <el-table-column
       prop="id"
       label="ID"
-      width="70">
+      width="50">
     </el-table-column>
     <el-table-column
       prop="email"
@@ -41,7 +41,6 @@ export default {
     axios
       .get('/api/users', this.credentials)
       .then((res) => {
-        console.log(res.data[0].isAdmin);
         this.users = res.data;
       })
       .catch((err) => {
