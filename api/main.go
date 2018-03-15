@@ -33,10 +33,15 @@ func main() {
 	r.Get("/projects/{id}", env.getProject)
 	r.Get("/projects/{id}/comments", env.getProjectComments)
 	r.Post("/project", env.createProject)
+
 	r.Post("/user", env.createUser)
 	r.Get("/users", env.getUsers)
+
+	r.Post("/payments", env.createPayment)
+
 	r.Get("/categories", env.getCategories)
 	r.Post("/category", env.createCategory)
+
 	r.Get("/comments", env.getComments)
 	r.Post("/comments", env.createComment)
 
@@ -148,6 +153,33 @@ func (env *Env) createUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respondWithJSON(w, http.StatusCreated, userID)
+}
+
+type paymentRequest struct {
+	UserID    int     `json:"userId"`
+	ProjectID int     `json:"projectId"`
+	Amount    float64 `json:"amount"`
+}
+
+func (env *Env) createPayment(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var payment paymentRequest
+	err := decoder.Decode(&payment)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	paymentID, err := env.db.CreatePayment(
+		payment.UserID,
+		payment.ProjectID,
+		payment.Amount,
+	)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusCreated, paymentID)
 }
 
 func (env *Env) getCategories(w http.ResponseWriter, r *http.Request) {

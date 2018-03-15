@@ -97,12 +97,20 @@ export default {
   methods: {
     submit() {
       this.project.amountRaised += this.fundingAmount;
-      // reset amount
-      this.fundingAmount = 0;
-      this.$notify({
-        title: 'Success!',
-        message: "You've backed a project",
-        type: 'success',
+      axios.post("/api/payments", {
+        userId: 1,
+        projectId: this.project.id,
+        amount: this.fundingAmount,
+      }).then(() => {
+        this.fundingAmount = 0;
+        // reset amount
+        this.$notify({
+          title: 'Success!',
+          message: "You've backed a project",
+          type: 'success',
+        });
+      }).catch((err) => {
+        console.error(err);
       });
     },
   },

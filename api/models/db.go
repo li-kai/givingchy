@@ -31,6 +31,13 @@ type Datastore interface {
 	AllCategories() ([]*Category, error)
 	CreateCategory(name string) error
 
+	AllPayments() ([]*Payment, error)
+	AllProjectPayments(projectID int) ([]*Payment, error)
+	AllUserPayments(userID int) ([]*Payment, error)
+	CreatePayment(userID int, projectID int, amount float64) (int, error)
+	UpdatePayment(paymentID int, amount float64) error
+	DeletePayment(paymentID int) error
+
 	AllComments() ([]*Comment, error)
 	AllProjectComments(projectID int) ([]*Comment, error)
 	AllUserComments(userID int) ([]*Comment, error)
