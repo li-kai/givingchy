@@ -145,7 +145,7 @@ Vue.config.productionTip = false;
   // Footer,
 ].forEach((comp) => Vue.use(comp));
 
-// Vue.use(Loading.directive);
+Vue.use(Loading.directive);
 
 // Vue.prototype.$loading = Loading.service;
 // Vue.prototype.$msgbox = MessageBox;

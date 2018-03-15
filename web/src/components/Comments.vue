@@ -55,7 +55,6 @@ export default {
           ...comment,
           timeAgo: distanceInWordsToNow(comment.createdAt, { addSuffix: true }),
         }));
-        console.log(res.data);
       })
       .catch((err) => console.error(err));
   },
