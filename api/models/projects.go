@@ -21,17 +21,17 @@ type Project struct {
 // AllProjects gets all projects in db
 func (db *DB) AllProjects() ([]*Project, error) {
 	rows, err := db.Query(`
-        WITH total_payments AS (
-            SELECT user_id, sum(amount) AS raised
+        WITH total_funds AS (
+            SELECT project_id, sum(amount) AS raised
             FROM payments
-            GROUP BY user_id
+            GROUP BY project_id
         )
         SELECT p.id, p.title, p.description,
                p.start_time, p.end_time,
                p.amount_required, COALESCE(f.raised, 0) as amount_raised,
                p.verified, p.category, p.user_id
-        FROM projects p LEFT OUTER JOIN total_payments f
-        ON p.user_id = f.user_id`)
+        FROM projects p LEFT OUTER JOIN total_funds f
+        ON p.id = f.project_id`)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func (db *DB) GetProject(id string) (*Project, error) {
                p.amount_required, COALESCE(SUM(f.amount), 0) as amount_raised,
                p.verified, p.category, p.user_id
         FROM projects p LEFT OUTER JOIN payments f
-        ON p.user_id = f.user_id
+        ON p.id = f.project_id
         WHERE p.id = $1
         GROUP BY p.id, p.user_id
     `, id,
