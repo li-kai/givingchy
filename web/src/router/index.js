@@ -3,7 +3,7 @@ import Router from 'vue-router';
 import Auth from '../auth';
 import Root from '../components/Root';
 import Project from '../components/project/Project';
-import NewProject from '../components/project/New';
+import NewProject from '../components/project/NewProject';
 import Admin from '../components/auth/Admin';
 import Login from '../components/auth/Login';
 import SignUp from '../components/auth/SignUp';
