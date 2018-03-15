@@ -6,7 +6,7 @@
         <h3>{{project.title}}</h3>
       </router-link>
       <h4>{{project.description}}</h4>
-      <span>{{timeLeft}} left</span>
+      <span>{{timeLeft}}</span>
     </div>
     <el-row class="keywords">
       <el-col :span="1" v-for="(keyword, index) in project.keywords" :key="index">
@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
+import isFuture from 'date-fns/is_future';
 export default {
   name: 'card',
   props: {
@@ -26,13 +28,12 @@ export default {
   },
   computed: {
     timeLeft() {
-      const secondsLeft = (new Date(this.project.endTime) - Date.now()) / 1000;
-      const minutesLeft = secondsLeft / 60;
-      if (minutesLeft < 60) return `${Math.round(minutesLeft)} minutes`;
-      const hoursLeft = minutesLeft / 60;
-      if (hoursLeft < 24) return `${Math.round(hoursLeft)} hours`;
-      const daysLeft = hoursLeft / 24;
-      return `${Math.round(daysLeft)} days`;
+      const { endTime} = this.project;
+      const ago = distanceInWordsToNow(this.project.endTime);
+      if (isFuture(endTime)) {
+        return `${ago} left`;
+      }
+      return `Ended ${ago} ago`;
     },
     projectPath() {
       return { name: 'projects', params: { id: this.project.id } };
