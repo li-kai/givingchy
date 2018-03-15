@@ -27,8 +27,16 @@ type Datastore interface {
 	AllUsers() ([]*User, error)
 	GetUser(email string, password string) (*User, error)
 	CreateUser(email string, password string) (int, error)
+
 	AllCategories() ([]*Category, error)
 	CreateCategory(name string) error
+
+	AllComments() ([]*Comment, error)
+	AllProjectComments(projectID int) ([]*Comment, error)
+	AllUserComments(userID int) ([]*Comment, error)
+	CreateComment(userID int, projectID int, content string) (int, error)
+	UpdateComment(commentID int, content string) error
+	DeleteComment(commentID int) error
 }
 
 // DB Wraps sql db for usage

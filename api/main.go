@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"api/models"
@@ -30,11 +31,14 @@ func main() {
 	env := &Env{db}
 	r.Get("/projects", env.getProjects)
 	r.Get("/projects/{id}", env.getProject)
+	r.Get("/projects/{id}/comments", env.getProjectComments)
 	r.Post("/project", env.createProject)
 	r.Post("/user", env.createUser)
 	r.Get("/users", env.getUsers)
 	r.Get("/categories", env.getCategories)
 	r.Post("/category", env.createCategory)
+	r.Get("/comments", env.getComments)
+	r.Post("/comments", env.createComment)
 
 	port := os.Getenv("PORT")
 	log.Println("Running server at port " + port)
@@ -64,6 +68,21 @@ func (env *Env) getProject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respondWithJSON(w, http.StatusOK, project)
+}
+
+func (env *Env) getProjectComments(w http.ResponseWriter, r *http.Request) {
+	projectID, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		respondWithError(w, http.StatusNotFound, "No such project id")
+		return
+	}
+	comments, err := env.db.AllProjectComments(projectID)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, comments)
 }
 
 type projectRequest struct {
@@ -155,6 +174,43 @@ func (env *Env) createCategory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondWithJSON(w, http.StatusCreated, category)
+}
+
+func (env *Env) getComments(w http.ResponseWriter, r *http.Request) {
+	comments, err := env.db.AllComments()
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, comments)
+}
+
+type commentRequest struct {
+	UserID    int    `json:"userId"`
+	ProjectID int    `json:"projectId"`
+	Content   string `json:"content"`
+}
+
+func (env *Env) createComment(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var comment commentRequest
+	err := decoder.Decode(&comment)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	commentID, err := env.db.CreateComment(
+		comment.UserID,
+		comment.ProjectID,
+		comment.Content,
+	)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusCreated, commentID)
 }
 
 func respondWithError(w http.ResponseWriter, code int, message string) {
