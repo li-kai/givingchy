@@ -28,7 +28,7 @@ export default {
     axios
       .get('api/projects')
       .then((res) => {
-        this.projects = res.data;
+        this.projects = res.data.sort((a, b) => a.id - b.id);
       })
       .catch((err) => console.error(err));
   },
