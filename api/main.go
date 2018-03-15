@@ -37,6 +37,7 @@ func main() {
 	r.Post("/user", env.createUser)
 	r.Get("/users", env.getUsers)
 
+	r.Get("/payments", env.getPayments)
 	r.Post("/payments", env.createPayment)
 
 	r.Get("/categories", env.getCategories)
@@ -153,6 +154,16 @@ func (env *Env) createUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respondWithJSON(w, http.StatusCreated, userID)
+}
+
+func (env *Env) getPayments(w http.ResponseWriter, r *http.Request) {
+	users, err := env.db.AllPayments()
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, users)
 }
 
 type paymentRequest struct {
