@@ -140,7 +140,7 @@ Vue.config.productionTip = false;
   // Transfer,
   Container,
   Header,
-  // Aside,
+  Aside,
   Main,
   // Footer,
 ].forEach((comp) => Vue.use(comp));

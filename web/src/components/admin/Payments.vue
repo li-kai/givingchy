@@ -1,14 +1,14 @@
 <template>
 <div>
-  <h1>Users</h1>
+  <h1>Payments</h1>
   <el-table
-    :data="users"
-    :row-key="users.id"
+    :data="payments"
+    :row-key="payments.id"
     style="width: 100%">
     <el-table-column
       prop="id"
       label="ID"
-      width="180">
+      width="70">
     </el-table-column>
     <el-table-column
       prop="email"
@@ -19,7 +19,7 @@
       label="Type">
       <template slot-scope="scope">
         <el-tag type="danger" v-if="scope.row.isAdmin">Admin</el-tag>
-        <div v-else>User</div>
+        <div v-else>Payment</div>
       </template>
     </el-table-column>
   </el-table>
@@ -30,19 +30,19 @@
 import axios from 'axios';
 
 export default {
-  name: 'auth',
+  name: 'payments',
   data() {
     return {
-      users: [],
+      payments: [],
     };
   },
   methods: {},
   created() {
     axios
-      .get('/api/users', this.credentials)
+      .get('/api/payments', this.credentials)
       .then((res) => {
         console.log(res.data[0].isAdmin);
-        this.users = res.data;
+        this.payments = res.data;
       })
       .catch((err) => {
         console.error(err);

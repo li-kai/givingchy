@@ -4,7 +4,11 @@ import Auth from '../auth';
 import Root from '../components/Root';
 import Project from '../components/project/Project';
 import NewProject from '../components/project/NewProject';
-import Admin from '../components/auth/Admin';
+import Admin from '../components/Admin';
+import UsersAdmin from '../components/admin/Users';
+import ProjectsAdmin from '../components/admin/Projects';
+import PaymentsAdmin from '../components/admin/Payments';
+import CommentsAdmin from '../components/admin/Comments';
 import Login from '../components/auth/Login';
 import SignUp from '../components/auth/SignUp';
 
@@ -41,6 +45,28 @@ const router = new Router({
       path: '/admin',
       component: Admin,
       meta: { requiresAuth },
+      children: [
+        {
+          path: 'users',
+          component: UsersAdmin,
+          meta: { requiresAuth },
+        },
+        {
+          path: 'projects',
+          component: ProjectsAdmin,
+          meta: { requiresAuth },
+        },
+        {
+          path: 'payments',
+          component: PaymentsAdmin,
+          meta: { requiresAuth },
+        },
+        {
+          path: 'comments',
+          component: CommentsAdmin,
+          meta: { requiresAuth },
+        },
+      ],
     },
   ],
 });
