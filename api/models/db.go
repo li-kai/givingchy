@@ -53,21 +53,19 @@ func NewDB() (*DB, error) {
 			os.Getenv("POSTGRES_DB"),
 		)
 
-	var db *sql.DB
-	var err error
+	db, err := sql.Open("postgres", connectionString)
+	if err != nil {
+		return nil, err
+	}
 	// Try to connect every second
-	for i := 0; i < 30; i++ {
+	for i := 0; i < 10; i++ {
 		log.Printf("Attempting connection: %d", i)
-		db, err = sql.Open("postgres", connectionString)
+		err = db.Ping()
 		if err == nil {
-			break
+			return &DB{db}, nil
 		}
 
 		time.Sleep(time.Second)
 	}
-	err = db.Ping()
-	if err != nil {
-		return nil, err
-	}
-	return &DB{db}, nil
+	return nil, err
 }
