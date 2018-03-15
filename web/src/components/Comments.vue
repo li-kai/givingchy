@@ -7,7 +7,7 @@
         <div class="comments-timestamp">posted {{comment.timeAgo}}</div>
       </li>
     </ul>
-    <p v-else class="comments-empty">
+    <p v-else>
       No comments yet. Get the ball rolling!
     </p>
     <el-form ref="form" :model="form" label-position="top" class="form"
@@ -100,8 +100,6 @@ export default {
 }
 .comments-timestamp {
   color: #909399;
-}
-.comments-empty {
 }
 .form {
   margin-top: 1rem;

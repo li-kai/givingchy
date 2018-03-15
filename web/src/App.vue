@@ -31,10 +31,11 @@ export default {
   color: #2c3e50;
 }
 h1 {
-  font-size: 20px;
+  font-size: 24px;
 }
 h2 {
-  font-size: 18px;
+  font-size: 20px;
+  font-weight: 500;
 }
 .el-menu--horizontal > .el-menu-item.auth {
   float: right;

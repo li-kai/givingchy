@@ -8,7 +8,13 @@
         <el-col :xs="24" :sm="8" :lg="14">
           <h1>{{project.title}}</h1>
           <h2>{{project.description}}</h2>
-          <el-progress :percentage="fundingPercentage" :status="fundingStatus"></el-progress>
+          <div class="amount-raised">${{project.amountRaised}}</div>
+          <div class="amount-required">raised of ${{project.amountRequired}} goal</div>
+          <el-progress
+            :percentage="fundingPercentage"
+            :status="fundingStatus"
+            class="amount-percentage">
+          </el-progress>
           <el-row class="keywords">
             <el-col :span="1" v-for="(keyword, index) in project.keywords" :key="index">
               <el-tag type="info">{{keyword}}</el-tag>
@@ -24,8 +30,8 @@
           <p>
             {{ timeLeft }}
           </p>
-          <el-slider :max="1000" v-model="fundingAmount" show-input></el-slider>
-          <el-button type="primary" @click="submit()">
+          <el-slider :max="1000" v-model="fundingAmount" show-input class="amount-slider"></el-slider>
+          <el-button type="primary" @click="submit()" :disabled="fundingAmount <= 0">
             Back project
           </el-button>
         </el-col>
@@ -70,7 +76,8 @@ export default {
     fundingPercentage() {
       const { amountRaised, amountRequired } = this.project;
       const twoDecimalPlaces = (amountRaised / amountRequired * 100).toFixed(2);
-      return parseFloat(twoDecimalPlaces);
+      const float = parseFloat(twoDecimalPlaces);
+      return float <= 100 ? float : 100;
     },
     fundingStatus() {
       const secondsLeft = Date.now() - this.project.endTime;
@@ -89,6 +96,9 @@ export default {
   },
   methods: {
     submit() {
+      this.project.amountRaised += this.fundingAmount;
+      // reset amount
+      this.fundingAmount = 0;
       this.$notify({
         title: 'Success!',
         message: "You've backed a project",
@@ -103,6 +113,20 @@ export default {
 .image {
   width: 100%;
   object-fit: cover;
+}
+.amount-raised {
+  font-size: 1.35em;
+}
+.amount-required {
+  color: #606266;
+}
+.amount-percentage {
+  display: flex;
+  align-items: center;
+  max-width: 16rem;
+}
+.amount-slider {
+  max-width: 36rem;
 }
 .keywords {
   margin: 0.5rem 0.5rem 0 0;
