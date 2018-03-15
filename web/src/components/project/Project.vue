@@ -2,10 +2,10 @@
   <el-row type="flex" justify="center">
     <el-col :xs="24" :sm="18">
     <el-row :gutter="20">
-      <el-col :xs="24" :sm="16">
+      <el-col :xs="24" :sm="16" :lg="10">
         <img src="https://via.placeholder.com/150x150" class="image">
       </el-col>
-      <el-col :xs="24" :sm="8">
+      <el-col :xs="24" :sm="8" :lg="14">
         <h1>{{project.title}}</h1>
         <h2>{{project.description}}</h2>
         <el-progress :percentage="fundingPercentage" :status="fundingStatus"></el-progress>
@@ -30,16 +30,27 @@
         </el-button>
       </el-col>
     </el-row>
+    <el-row class="keyline">
+      <el-col>
+        <comments :project-id="project.id"/>
+      </el-col>
+    </el-row>
     </el-col>
   </el-row>
 </template>
 
 <script>
+import Comments from '../Comments.vue';
 import axios from 'axios';
+import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
+import isFuture from 'date-fns/is_future';
 import { projects } from '../../fixtures';
 
 export default {
   name: 'project',
+  components: {
+    Comments,
+  },
   data() {
     return {
       project: projects[0],
@@ -48,16 +59,12 @@ export default {
   },
   computed: {
     timeLeft() {
-      const secondsLeft = (new Date(this.project.endTime) - Date.now()) / 1000
-      const minutesLeft = secondsLeft / 60;
-      if (minutesLeft < 60) return `Closes in ${Math.round(minutesLeft)} minutes`;
-      const hoursLeft = minutesLeft / 60;
-      if (hoursLeft < 24) return `Closes in ${Math.round(hoursLeft)} hours`;
-      const daysLeft = hoursLeft / 24;
-      if (daysLeft > 0) {
-        return `Closes in ${Math.round(daysLeft)} days`;
+      const { endTime } = this.project;
+      const ago = distanceInWordsToNow(this.project.endTime);
+      if (isFuture(endTime)) {
+        return `Closes in ${ago}`;
       }
-      return 'Project has ended';
+      return "Project has ended";
     },
     fundingPercentage() {
       const { amountRaised, amountRequired } = this.project;
@@ -97,5 +104,9 @@ export default {
 }
 .keywords {
   margin: 0.5rem 0.5rem 0 0;
+}
+.keyline {
+  margin-top: 2rem;
+  border-top: 1px solid #e4e7ed;
 }
 </style>
