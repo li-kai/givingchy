@@ -1,7 +1,7 @@
 <template>
-  <el-row :gutter="20" class="container">
+  <el-row :gutter="20">
     <el-col :span="4">
-    <el-aside width="100%">
+    <el-aside width="100%" class="aside">
       <el-menu
         :router="true"
         :default-active="$route.path"
@@ -40,4 +40,7 @@ export default {
 </script>
 
 <style scoped>
+.aside {
+  overflow: visible;
+}
 </style>

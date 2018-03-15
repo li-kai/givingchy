@@ -63,7 +63,7 @@ export default {
   },
   computed: {
     comments() {
-      return this.rawComments
+      return this.rawComments.slice()
         .sort((a, b) => a.id - b.id);
     },
   },
