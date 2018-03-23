@@ -1,10 +1,3 @@
--- Sql functions and triggers for categories
-
-----  all_categories()
--- usage : select * from all_categories();
-
----- create_categories(name citext)
--- usage select create_categories('example'); 
 drop function all_categories;
 drop function create_categories;
 drop type cate_row;

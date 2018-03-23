@@ -1,5 +1,3 @@
--- similar as comments.sql
-
 drop function all_payments;
 drop function all_project_payments;
 drop function all_user_payments;

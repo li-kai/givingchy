@@ -1,22 +1,3 @@
--- Sql functions and triggers for comments
-
----- all_comments()
--- usage : select * from all_comments();
-
----- all_project_comments(_project_id int)
--- usage : select * from all_project_comments(1);
-
----- all_user_comments(_user_id int);
--- usage : select * from all_user_comments(1);
-
----- create_comment(_user_id int, _project_id int, _content text)
--- usage : select create_comment(1, 1, 'hello world');
-
----- update_comment(_comment_id int, _content text)
--- usage : select update_comment(1, 'hello world');
-
----- delete_comment(_comment_id int)
--- usage : select delete_comment(1);
 drop function all_comments;
 drop function all_project_comments;
 drop function all_user_comments;
