@@ -1,5 +1,13 @@
 -- similar as comments.sql
 
+drop function all_payments;
+drop function all_project_payments;
+drop function all_user_payments;
+drop function create_payment;
+drop function update_payment;
+drop function delete_payment;
+drop type payments_row;
+
 create type payments_row as (
     id int,
     user_id int,
@@ -57,11 +65,8 @@ $$ language plpgsql;
 
 create or replace function create_payment(_user_id int, _project_id int, _amount numeric)
 returns text as $$
-    insert into payments
-        values((
-            select count(*) + 1
-            from payments
-        ), _user_id, _project_id, CURRENT_TIMESTAMP, _amount);
+    insert into payments(user_id, project_id, amount)
+        values(_user_id, _project_id, _amount);
     select 'Insert OK';
 $$ language sql;
 

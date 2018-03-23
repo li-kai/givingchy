@@ -17,6 +17,13 @@
 
 ---- delete_comment(_comment_id int)
 -- usage : select delete_comment(1);
+drop function all_comments;
+drop function all_project_comments;
+drop function all_user_comments;
+drop function create_comment;
+drop function update_comment;
+drop function delete_comment;
+drop type comment_row;
 
 create type comment_row as (
     id int,
@@ -75,11 +82,8 @@ $$ language plpgsql;
 
 create or replace function create_comment(_user_id int, _project_id int, _content text)
 returns text as $$
-    insert into comments
-        values((
-            select count(*) + 1
-            from comments
-        ), _user_id, _project_id, CURRENT_TIMESTAMP, _content);
+    insert into comments(user_id, project_id, content)
+        values(_user_id, _project_id, _content);
     select 'Insert OK';
 $$ language sql;
 

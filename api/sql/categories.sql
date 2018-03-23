@@ -5,6 +5,9 @@
 
 ---- create_categories(name citext)
 -- usage select create_categories('example'); 
+drop function all_categories;
+drop function create_categories;
+drop type cate_row;
 
 create type cate_row as (
     name citext
