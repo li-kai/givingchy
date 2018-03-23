@@ -15,7 +15,7 @@ declare
     usr user_row%rowtype;
 begin
     for usr in
-        select *
+        select id, email, is_admin
         from users
     loop
         return next usr;
@@ -29,10 +29,10 @@ returns user_row as $$
 declare
     usr user_row%rowtype;
 begin
-    select *
+    select id, email, is_admin
         into usr
         from users
-        where email = _email and password = crypt(_password);
+        where email = _email and password = crypt(_password, 'salt');
     return usr;
 end
 $$ language plpgsql;
@@ -40,6 +40,6 @@ $$ language plpgsql;
 create or replace function create_user(_email citext, _password varchar(255))
 returns text as $$
     INSERT INTO users (email, password)
-        VALUES(_email, crypt(_password, gen_salt('bf', 8)));
+        VALUES(_email, crypt(_password, 'salt'));
     select 'create OK';
 $$ language sql;
