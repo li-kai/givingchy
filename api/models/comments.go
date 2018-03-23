@@ -39,25 +39,21 @@ func readComments(rows *sql.Rows, err error) ([]*Comment, error) {
 // AllComments gets all comments in db
 func (db *DB) AllComments() ([]*Comment, error) {
 	return readComments(db.Query(`
-        SELECT id, user_id, project_id, moment, content
-        FROM comments`))
+		select * from all_comments()
+		`))
 }
 
 // AllProjectComments gets all comments in db related to project
 func (db *DB) AllProjectComments(projectID int) ([]*Comment, error) {
 	return readComments(db.Query(`
-        SELECT id, user_id, project_id, moment, content
-        FROM comments
-        WHERE project_id = $1
+        select * from all_project_comments($1)
     `, projectID))
 }
 
 // AllUserComments gets all comments in db related to user
 func (db *DB) AllUserComments(userID int) ([]*Comment, error) {
 	return readComments(db.Query(`
-        SELECT id, user_id, project_id, moment, content
-        FROM comments
-        WHERE user_id = $1
+        select * from all_user_comments($1)
     `, userID))
 }
 
@@ -65,9 +61,7 @@ func (db *DB) AllUserComments(userID int) ([]*Comment, error) {
 func (db *DB) CreateComment(userID int, projectID int, content string) (int, error) {
 	id := 0
 	err := db.QueryRow(`
-        INSERT INTO comments (user_id, project_id, content)
-        VALUES($1, $2, $3)
-        RETURNING id
+        select create_comment($1, $2, $3)
     `, userID, projectID, content,
 	).Scan(&id)
 	return id, err
@@ -76,9 +70,7 @@ func (db *DB) CreateComment(userID int, projectID int, content string) (int, err
 // UpdateComment updates a comment given id and new updated text
 func (db *DB) UpdateComment(commentID int, content string) error {
 	_, err := db.Exec(`
-        UPDATE comments
-        SET content = $1
-        WHERE id = $2
+        select update_comment($1, $2)
     `, content, commentID,
 	)
 	return err
@@ -87,8 +79,7 @@ func (db *DB) UpdateComment(commentID int, content string) error {
 // DeleteComment deletes a comment given id
 func (db *DB) DeleteComment(commentID int) error {
 	_, err := db.Exec(`
-        DELETE FROM comments
-        WHERE id = $1
+        select delete_commet($1)
     `, commentID,
 	)
 	return err

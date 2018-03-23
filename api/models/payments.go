@@ -39,25 +39,21 @@ func readPayments(rows *sql.Rows, err error) ([]*Payment, error) {
 // AllPayments gets all payments in db
 func (db *DB) AllPayments() ([]*Payment, error) {
 	return readPayments(db.Query(`
-        SELECT id, user_id, project_id, moment, amount
-        FROM payments`))
+		select * from all_payments()
+		`))
 }
 
 // AllProjectPayments gets all payments in db related to project
 func (db *DB) AllProjectPayments(projectID int) ([]*Payment, error) {
 	return readPayments(db.Query(`
-        SELECT id, user_id, project_id, moment, amount
-        FROM payments
-        WHERE project_id = $1
+        select * from all_project_payments($1)
     `, projectID))
 }
 
 // AllUserPayments gets all payments in db related to user
 func (db *DB) AllUserPayments(userID int) ([]*Payment, error) {
 	return readPayments(db.Query(`
-        SELECT id, user_id, project_id, moment, amount
-        FROM payments
-        WHERE user_id = $1
+        select * from all_user_payments($1)
     `, userID))
 }
 
@@ -65,9 +61,7 @@ func (db *DB) AllUserPayments(userID int) ([]*Payment, error) {
 func (db *DB) CreatePayment(userID int, projectID int, amount float64) (int, error) {
 	id := 0
 	err := db.QueryRow(`
-        INSERT INTO payments (user_id, project_id, amount)
-        VALUES($1, $2, $3)
-        RETURNING id
+        select create_payment($1, $2, $3)
     `, userID, projectID, amount,
 	).Scan(&id)
 	return id, err
@@ -76,9 +70,7 @@ func (db *DB) CreatePayment(userID int, projectID int, amount float64) (int, err
 // UpdatePayment updates a payment given id and new updated text
 func (db *DB) UpdatePayment(paymentID int, amount float64) error {
 	_, err := db.Exec(`
-        UPDATE payments
-        SET amount = $1
-        WHERE id = $2
+        select update_payment($1, $2)
     `, amount, paymentID,
 	)
 	return err
@@ -87,8 +79,7 @@ func (db *DB) UpdatePayment(paymentID int, amount float64) error {
 // DeletePayment deletes a payment given id
 func (db *DB) DeletePayment(paymentID int) error {
 	_, err := db.Exec(`
-        DELETE FROM payments
-        WHERE id = $1
+        select delete_payment($1)
     `, paymentID,
 	)
 	return err
