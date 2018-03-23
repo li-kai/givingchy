@@ -9,7 +9,7 @@ delete from users;
 select create_user('1@gmail.com', '123');
 select create_user('2@gmail.com', '1234');
 select * from all_users();
-select get_user('1@gmail.com', '123');
+select * from get_user('1@gmail.com', '123');
 
 -- test for categories.sql
 
