@@ -32,7 +32,7 @@ begin
     select id, email, is_admin
         into usr
         from users
-        where email = _email and password = crypt(_password, 'salt');
+        where email = _email and password = crypt(_password, password);
     return usr;
 end
 $$ language plpgsql;
@@ -40,6 +40,6 @@ $$ language plpgsql;
 create or replace function create_user(_email citext, _password varchar(255))
 returns text as $$
     INSERT INTO users (email, password)
-        VALUES(_email, crypt(_password, 'salt'));
+        VALUES(_email, crypt(_password, gen_salt('bf', 8)));
     select 'create OK';
 $$ language sql;
