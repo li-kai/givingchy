@@ -38,8 +38,7 @@ end
 $$ language plpgsql;
 
 create or replace function create_user(_email citext, _password varchar(255))
-returns text as $$
+returns void as $$
     INSERT INTO users (email, password)
         VALUES(_email, crypt(_password, gen_salt('bf', 8)));
-    select 'create OK';
 $$ language sql;

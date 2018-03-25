@@ -22,8 +22,7 @@ end
 $$ language plpgsql;
 
 create or replace function create_categories(name citext)
-returns text as $$
+returns void as $$
     insert into categories
         values(name);
-    select 'Insert OK';
 $$ language sql;

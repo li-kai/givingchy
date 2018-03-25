@@ -62,23 +62,20 @@ end
 $$ language plpgsql;
 
 create or replace function create_comment(_user_id int, _project_id int, _content text)
-returns text as $$
+returns void as $$
     insert into comments(user_id, project_id, content)
         values(_user_id, _project_id, _content);
-    select 'Insert OK';
 $$ language sql;
 
 create or replace function update_comment(_comment_id int, _content text)
-returns text as $$
+returns void as $$
     update comments
         set content = _content
         where id = _comment_id;
-    select 'Update OK';
 $$ language sql;
 
 create or replace function delete_comment(_comment_id int)
-returns text as $$
+returns void as $$
     delete from comments
         where id = _comment_id;
-    select 'Delete OK';
 $$ language sql;

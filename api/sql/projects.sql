@@ -47,10 +47,9 @@ create or replace function create_project(
     _end_time timestamp,
     _category citext,
     _user_id int) 
-returns text as $$
+returns void as $$
     insert into projects (title, description, amount_required, end_time, category, user_id)
         values (_title, _description, _amount_required, _end_time, _category, _user_id);
-    select 'Insert OK';
 $$ language sql;
 
 create or replace function get_project(_project_id int)

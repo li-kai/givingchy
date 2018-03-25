@@ -15,6 +15,11 @@ select * from get_user('1@gmail.com', '123');
 
 select create_categories('Art');
 select create_categories('Science');
+-- deallocate tra_all_cate;
+-- prepare tra_all_cate as 
+--     select name
+--     from categories;
+-- execute tra_all_cate;
 select * from all_categories();
 
 -- test for projects.sql
