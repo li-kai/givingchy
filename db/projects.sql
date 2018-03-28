@@ -22,17 +22,19 @@ begin
     insert into logs(content, log_level)
         values ('Select all projects', 1);
     for proj in
-        WITH total_funds AS (
-            SELECT project_id, sum(amount) AS raised
-            FROM payments
-            GROUP BY project_id
-        )
-        SELECT p.project_id, p.title, p.description,
-               p.start_time, p.end_time,
-               p.amount_required, COALESCE(f.raised, 0) as amount_raised,
-               p.verified, p.category, p.user_id
-        FROM projects p LEFT OUTER JOIN total_funds f
-        ON p.project_id = f.project_id
+        -- WITH total_funds AS (
+        --     SELECT project_id, sum(amount) AS raised
+        --     FROM payments
+        --     GROUP BY project_id
+        -- )
+        -- SELECT p.project_id, p.title, p.description,
+        --        p.start_time, p.end_time,
+        --        p.amount_required, COALESCE(f.raised, 0) as amount_raised,
+        --        p.verified, p.category, p.user_id
+        -- FROM projects p LEFT OUTER JOIN total_funds f
+        -- ON p.project_id = f.project_id
+        select *
+        from whole_project_info
     loop
         return next proj;
     end loop;
@@ -59,15 +61,10 @@ declare
 begin
     insert into logs(project_id, content, log_level)
         values (_project_id, 'Select project', 1);
-    SELECT p.project_id, p.title, p.description,
-        p.start_time, p.end_time,
-        p.amount_required, COALESCE(SUM(f.amount), 0) as amount_raised,
-        p.verified, p.category, p.user_id
+    select *
+        from whole_project_info
         into proj_row
-        FROM projects p LEFT OUTER JOIN payments f
-        ON p.project_id = f.project_id
-        WHERE p.project_id = $1
-        GROUP BY p.project_id, p.user_id;
+        where project_id = $1;
     return proj_row;
 end
 $$ language plpgsql;

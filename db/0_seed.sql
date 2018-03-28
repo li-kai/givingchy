@@ -6,6 +6,7 @@ drop table if exists projects CASCADE;
 drop table if exists payments CASCADE;
 drop table if exists comments CASCADE;
 drop table if exists logs CASCADE;
+drop view if exists whole_project_info CASCADE;
 
 CREATE TABLE IF NOT EXISTS users (
     user_id SERIAL PRIMARY KEY,
@@ -54,6 +55,15 @@ create table if not exists logs (
     content text not null,
     log_level integer not null
 );
+
+create view whole_project_info as 
+    SELECT p.project_id, p.title, p.description,
+        p.start_time, p.end_time,
+        p.amount_required, COALESCE(SUM(f.amount), 0) as amount_raised,
+        p.verified, p.category, p.user_id
+    FROM projects p LEFT OUTER JOIN payments f
+    ON p.project_id = f.project_id
+    GROUP BY p.project_id, p.user_id;
 
 -- -- SOURCE: https://www.meetspaceapp.com/2016/04/12/passwords-postgresql-pgcrypto.html
 -- PREPARE create_user (TEXT, VARCHAR) AS
