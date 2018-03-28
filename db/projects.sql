@@ -1,6 +1,8 @@
-drop type if exists project_row;
+drop type if exists project_row cascade;
+drop trigger if exists take_log on projects;
+
 create type project_row as (
-    id int,
+    project_id int,
     title varchar(100),
     description text,
     start_time timestamp,
@@ -23,12 +25,12 @@ begin
             FROM payments
             GROUP BY project_id
         )
-        SELECT p.id, p.title, p.description,
+        SELECT p.project_id, p.title, p.description,
                p.start_time, p.end_time,
                p.amount_required, COALESCE(f.raised, 0) as amount_raised,
                p.verified, p.category, p.user_id
         FROM projects p LEFT OUTER JOIN total_funds f
-        ON p.id = f.project_id
+        ON p.project_id = f.project_id
     loop
         return next proj;
     end loop;
@@ -53,15 +55,18 @@ returns project_row as $$
 declare
     proj_row project_row%rowtype;
 begin
-    SELECT p.id, p.title, p.description,
+    SELECT p.project_id, p.title, p.description,
         p.start_time, p.end_time,
         p.amount_required, COALESCE(SUM(f.amount), 0) as amount_raised,
         p.verified, p.category, p.user_id
         into proj_row
         FROM projects p LEFT OUTER JOIN payments f
-        ON p.id = f.project_id
-        WHERE p.id = $1
-        GROUP BY p.id, p.user_id;
+        ON p.project_id = f.project_id
+        WHERE p.project_id = $1
+        GROUP BY p.project_id, p.user_id;
     return proj_row;
 end
 $$ language plpgsql;
+
+create trigger take_log after insert or update or delete on projects
+for each row execute procedure create_log(' on projects');

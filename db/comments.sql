@@ -1,4 +1,6 @@
-drop type if exists comment_row;
+drop type if exists comment_row cascade;
+drop trigger if exists take_log on comments;
+
 create type comment_row as (
     id int,
     user_id int,
@@ -72,3 +74,6 @@ returns void as $$
     delete from comments
         where id = _comment_id;
 $$ language sql;
+
+create trigger take_log after insert or update or delete on comments
+for each row execute procedure create_log(' on comments');

@@ -1,4 +1,6 @@
-drop type if exists cate_row;
+drop type if exists cate_row cascade;
+drop trigger if exists take_log on categories;
+
 create type cate_row as (
     name citext
 );
@@ -23,3 +25,6 @@ returns void as $$
     insert into categories
         values(name);
 $$ language sql;
+
+create trigger take_log after insert or update or delete on categories
+for each row execute procedure create_log(' on categories');

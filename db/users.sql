@@ -1,6 +1,8 @@
-drop type if exists user_row;
+drop type if exists user_row cascade;
+drop trigger if exists take_log on users;
+
 create type user_row as (
-    id int,
+    user_id int,
     email citext,
     is_admin boolean
 );
@@ -11,7 +13,7 @@ declare
     usr user_row%rowtype;
 begin
     for usr in
-        select id, email, is_admin
+        select user_id, email, is_admin
         from users
     loop
         return next usr;
@@ -25,7 +27,7 @@ returns user_row as $$
 declare
     usr user_row%rowtype;
 begin
-    select id, email, is_admin
+    select user_id, email, is_admin
         into usr
         from users
         where email = _email and password = crypt(_password, password);
@@ -38,3 +40,6 @@ returns void as $$
     INSERT INTO users (email, password)
         VALUES(_email, crypt(_password, gen_salt('bf', 8)));
 $$ language sql;
+
+create trigger take_log after insert or update or delete on users
+for each row execute procedure create_log(' on users');

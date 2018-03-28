@@ -1,4 +1,6 @@
-drop type if exists payments_row;
+drop type if exists payments_row cascade;
+drop trigger if exists take_log on payments;
+
 create type payments_row as (
     id int,
     user_id int,
@@ -72,3 +74,6 @@ returns void as $$
     delete from payments
         where id = _payment_id;
 $$ language sql;
+
+create trigger take_log after insert or update or delete on payments
+for each row execute procedure create_log(' on payments');

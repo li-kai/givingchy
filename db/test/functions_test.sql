@@ -1,3 +1,4 @@
+delete from logs;
 delete from payments;
 delete from comments;
 delete from projects;
@@ -8,50 +9,47 @@ delete from users;
 
 select create_user('1@gmail.com', '123');
 select create_user('2@gmail.com', '1234');
+select create_user('3@gmail.com', '12345');
 select * from all_users();
 select * from get_user('1@gmail.com', '123');
+delete from users where email = '3@gmail.com';
 
 -- test for categories.sql
 
 select create_categories('Art');
 select create_categories('Science');
--- deallocate tra_all_cate;
--- prepare tra_all_cate as 
---     select name
---     from categories;
--- execute tra_all_cate;
 select * from all_categories();
 
 -- test for projects.sql
 
 select create_project('hello', 'hello', 100.0, '2018-08-20 14:52:49'::timestamp, 'Art', (
-    select max(id) - 1
+    select max(user_id) - 1
     from users
 ));
 select create_project('bye', 'bye', 100.0, '2018-08-20 14:52:49'::timestamp, 'Art', (
-    select max(id)
+    select max(user_id)
     from users
 ));
 select * from all_projects();
 select * from get_project((
-    select max(id)
+    select max(project_id)
     from projects
 ));
 
 -- test for payments.sql
 
 select create_payment((
-    select max(id)
+    select max(user_id)
     from users
 ), (
-    select max(id)
+    select max(project_id)
     from projects
 ), 20.0);
 select create_payment((
-    select max(id)
+    select max(user_id)
     from users
 ), (
-    select max(id)
+    select max(project_id)
     from projects
 ), 20.0);
 select update_payment((
@@ -59,11 +57,11 @@ select update_payment((
     from payments
 ), 30.0);
 select * from all_project_payments((
-    select max(id)
+    select max(project_id)
     from projects
 ));
 select * from all_user_payments((
-    select max(id)
+    select max(user_id)
     from users
 ));
 select delete_payment((
@@ -75,17 +73,17 @@ select * from all_payments();
 -- test for comments.sql
 
 select create_comment((
-    select max(id)
+    select max(user_id)
     from users
 ), (
-    select max(id)
+    select max(project_id)
     from projects
 ), 'hello');
 select create_comment((
-    select max(id)
+    select max(user_id)
     from users
 ), (
-    select max(id)
+    select max(project_id)
     from projects
 ), 'hello');
 select update_comment((
@@ -93,11 +91,11 @@ select update_comment((
     from comments
 ), 'bye');
 select * from all_project_comments((
-    select max(id)
+    select max(project_id)
     from projects
 ));
 select * from all_user_comments((
-    select max(id)
+    select max(user_id)
     from users
 ));
 select delete_comment((
