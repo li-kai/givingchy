@@ -1,7 +1,7 @@
 drop function all_projects;
 drop function create_project;
 drop function get_project;
-drop type proj_row;
+drop type project_row;
 
 create type project_row as (
     id int,
@@ -46,7 +46,7 @@ create or replace function create_project(
     _amount_required numeric,
     _end_time timestamp,
     _category citext,
-    _user_id int) 
+    _user_id int)
 returns void as $$
     insert into projects (title, description, amount_required, end_time, category, user_id)
         values (_title, _description, _amount_required, _end_time, _category, _user_id);
