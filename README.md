@@ -26,6 +26,13 @@ To work on:
 - web: work in /web folder, endpoint at https://localhost
 - db schema: work in /db folder
 
+### Accessing postgres shell
+
+```sh
+docker-compose exec postgres sh
+psql testdb -U postgres
+```
+
 ## Testing
 
 ```sh
