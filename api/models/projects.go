@@ -21,17 +21,8 @@ type Project struct {
 // AllProjects gets all projects in db
 func (db *DB) AllProjects() ([]*Project, error) {
 	rows, err := db.Query(`
-        WITH total_funds AS (
-            SELECT project_id, sum(amount) AS raised
-            FROM payments
-            GROUP BY project_id
-        )
-        SELECT p.id, p.title, p.description,
-               p.start_time, p.end_time,
-               p.amount_required, COALESCE(f.raised, 0) as amount_raised,
-               p.verified, p.category, p.user_id
-        FROM projects p LEFT OUTER JOIN total_funds f
-        ON p.id = f.project_id`)
+		select * from all_projects()
+		`)
 	if err != nil {
 		return nil, err
 	}
@@ -71,9 +62,7 @@ func (db *DB) CreateProject(
 ) (int, error) {
 	id := 0
 	err := db.QueryRow(`
-        INSERT INTO projects (title, description, amount_required, end_time, category, user_id)
-        VALUES($1, $2, $3, $4, $5, $6)
-        RETURNING id
+        select create_project($1, $2, $3, $4, $5, $6)
     `, title, description, amountRequired, endTime, category, userID,
 	).Scan(&id)
 	return id, err
@@ -83,14 +72,7 @@ func (db *DB) CreateProject(
 func (db *DB) GetProject(id string) (*Project, error) {
 	var project Project
 	err := db.QueryRow(`
-        SELECT p.id, p.title, p.description,
-               p.start_time, p.end_time,
-               p.amount_required, COALESCE(SUM(f.amount), 0) as amount_raised,
-               p.verified, p.category, p.user_id
-        FROM projects p LEFT OUTER JOIN payments f
-        ON p.id = f.project_id
-        WHERE p.id = $1
-        GROUP BY p.id, p.user_id
+        select * from get_project($1)
     `, id,
 	).Scan(
 		&project.ID,

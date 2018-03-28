@@ -11,8 +11,8 @@ type User struct {
 // AllUsers gets all users in db
 func (db *DB) AllUsers() ([]*User, error) {
 	rows, err := db.Query(`
-        SELECT id, email, is_admin
-        FROM users`)
+		select * from all_users()
+		`)
 	if err != nil {
 		return nil, err
 	}
@@ -38,9 +38,7 @@ func (db *DB) AllUsers() ([]*User, error) {
 func (db *DB) GetUser(email string, password string) (*User, error) {
 	var u User
 	err := db.QueryRow(`
-        SELECT id, email, is_admin FROM users
-        WHERE email = $1
-        AND password = crypt($2, password)
+        select * from get_user($1, $2)
     `, email, password,
 	).Scan(&u.ID, &u.Email, &u.IsAdmin)
 	if err != nil {
@@ -53,9 +51,7 @@ func (db *DB) GetUser(email string, password string) (*User, error) {
 func (db *DB) CreateUser(email string, password string) (int, error) {
 	id := 0
 	err := db.QueryRow(`
-        INSERT INTO users (email, password)
-        VALUES($1, crypt($2, gen_salt('bf', 8)))
-        RETURNING id
+        select create_user($1, $2)
     `, email, password,
 	).Scan(&id)
 	return id, err

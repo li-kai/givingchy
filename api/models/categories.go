@@ -7,7 +7,7 @@ type Category struct {
 
 // AllCategories gets all categories in db
 func (db *DB) AllCategories() ([]*Category, error) {
-	rows, err := db.Query(`SELECT name FROM categories`)
+	rows, err := db.Query(`select * from all_categories()`)
 	if err != nil {
 		return nil, err
 	}
@@ -31,8 +31,7 @@ func (db *DB) AllCategories() ([]*Category, error) {
 // requires admin access
 func (db *DB) CreateCategory(name string) error {
 	_, err := db.Exec(`
-        INSERT INTO categories (name)
-        VALUES($1)
+		select create_categories($1)
     `, name)
 	return err
 }
