@@ -14,6 +14,8 @@ returns setof payments_row as $$
 declare
     pay payments_row%rowtype;
 begin
+    insert into logs(content, log_level)
+        values ('Select all payments', 1);
     for pay in
         select *
         from payments
@@ -29,6 +31,8 @@ returns setof payments_row as $$
 declare
     pay payments_row%rowtype;
 begin
+    insert into logs(project_id, content, log_level)
+        values (_project_id, 'Select project_s payments', 1);
     for pay in
         select *
         from payments
@@ -45,6 +49,8 @@ returns setof payments_row as $$
 declare
     pay payments_row%rowtype;
 begin
+    insert into logs(project_id, content, log_level)
+        values (_user_id, 'Select uesr_s payments', 1);
     for pay in
         select *
         from payments

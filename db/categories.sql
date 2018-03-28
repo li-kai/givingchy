@@ -10,6 +10,8 @@ returns setof cate_row as $$
 declare
     cate cate_row%rowtype;
 begin
+    insert into logs(content, log_level)
+        values ('Select all categories', 1);
     for cate in
         select name
         from categories

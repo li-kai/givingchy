@@ -12,6 +12,8 @@ returns setof user_row as $$
 declare
     usr user_row%rowtype;
 begin
+    insert into logs(content, log_level)
+        values ('Select all users', 1);
     for usr in
         select user_id, email, is_admin
         from users
@@ -31,6 +33,8 @@ begin
         into usr
         from users
         where email = _email and password = crypt(_password, password);
+    insert into logs(user_id, content, log_level)
+        values (usr.user_id, 'Select user', 1);
     return usr;
 end
 $$ language plpgsql;

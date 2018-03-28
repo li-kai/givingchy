@@ -19,6 +19,8 @@ returns setof project_row as $$
 declare
     proj project_row%rowtype;
 begin
+    insert into logs(content, log_level)
+        values ('Select all projects', 1);
     for proj in
         WITH total_funds AS (
             SELECT project_id, sum(amount) AS raised
@@ -55,6 +57,8 @@ returns project_row as $$
 declare
     proj_row project_row%rowtype;
 begin
+    insert into logs(project_id, content, log_level)
+        values (_project_id, 'Select project', 1);
     SELECT p.project_id, p.title, p.description,
         p.start_time, p.end_time,
         p.amount_required, COALESCE(SUM(f.amount), 0) as amount_raised,

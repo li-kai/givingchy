@@ -14,6 +14,8 @@ returns setof comment_row as $$
 declare
     comm comment_row%rowtype;
 begin
+    insert into logs(content, log_level)
+        values ('Select all comments', 1);
     for comm in
         select *
         from comments
@@ -29,6 +31,8 @@ returns setof comment_row as $$
 declare
     comm comment_row%rowtype;
 begin
+    insert into logs(project_id, content, log_level)
+        values (_project_id, 'Select project_s comments', 1);
     for comm in
         select *
         from comments
@@ -45,6 +49,8 @@ returns setof comment_row as $$
 declare
     comm comment_row%rowtype;
 begin
+    insert into logs(user_id, content, log_level)
+        values (_user_id, 'Select user_s comments', 1);
     for comm in
         select *
         from comments
