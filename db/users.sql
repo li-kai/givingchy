@@ -1,8 +1,4 @@
-drop function all_users;
-drop function get_user;
-drop function create_user;
-drop type user_row;
-
+drop type if exists user_row;
 create type user_row as (
     id int,
     email citext,

@@ -1,17 +1,10 @@
-drop function all_comments;
-drop function all_project_comments;
-drop function all_user_comments;
-drop function create_comment;
-drop function update_comment;
-drop function delete_comment;
-drop type comment_row;
-
+drop type if exists comment_row;
 create type comment_row as (
     id int,
     user_id int,
     project_id int,
     moment timestamp,
-    content text 
+    content text
 );
 
 create or replace function all_comments()
@@ -34,7 +27,7 @@ returns setof comment_row as $$
 declare
     comm comment_row%rowtype;
 begin
-    for comm in 
+    for comm in
         select *
         from comments
         where project_id = _project_id
@@ -50,7 +43,7 @@ returns setof comment_row as $$
 declare
     comm comment_row%rowtype;
 begin
-    for comm in 
+    for comm in
         select *
         from comments
         where user_id = _user_id

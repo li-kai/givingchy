@@ -1,7 +1,4 @@
-drop function all_categories;
-drop function create_categories;
-drop type cate_row;
-
+drop type if exists cate_row;
 create type cate_row as (
     name citext
 );

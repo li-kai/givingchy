@@ -1,11 +1,4 @@
-drop function all_payments;
-drop function all_project_payments;
-drop function all_user_payments;
-drop function create_payment;
-drop function update_payment;
-drop function delete_payment;
-drop type payments_row;
-
+drop type if exists payments_row;
 create type payments_row as (
     id int,
     user_id int,

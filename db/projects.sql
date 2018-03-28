@@ -1,8 +1,4 @@
-drop function all_projects;
-drop function create_project;
-drop function get_project;
-drop type project_row;
-
+drop type if exists project_row;
 create type project_row as (
     id int,
     title varchar(100),
