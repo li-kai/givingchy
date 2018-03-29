@@ -50,11 +50,13 @@ create or replace function create_project(
     _bank_info citext,
     _amount_required numeric,
     _end_time timestamp)
-returns void as $$
+returns integer as $$
     insert into projects (title, user_id, category, description, image, reward, URL, bank_info,
             amount_required, end_time)
         values (_title, _user_id, _category, _description, _image, _reward, _URL, _bank_info,
             _amount_required, _end_time);
+    select max(project_id)
+        from projects
 $$ language sql;
 
 create or replace function get_project(_project_id int)

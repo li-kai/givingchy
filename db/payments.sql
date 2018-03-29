@@ -63,9 +63,11 @@ end
 $$ language plpgsql;
 
 create or replace function create_payment(_user_id int, _project_id int, _amount numeric)
-returns void as $$
+returns integer as $$
     insert into payments(user_id, project_id, amount)
         values(_user_id, _project_id, _amount);
+    select max(id) 
+        from payments;
 $$ language sql;
 
 create or replace function update_payment(_payment_id int, _amount numeric)

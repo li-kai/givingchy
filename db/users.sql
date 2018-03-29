@@ -63,11 +63,13 @@ create or replace function create_user(
     _bank_account citext,
     _birthday timestamp,
     _sex varchar(10))
-returns void as $$
+returns integer as $$
     INSERT INTO users (email, password, username, mobile_number, address, occupation, 
             image, motto, bank_account, birthday, sex)
         VALUES(_email, crypt(_password, gen_salt('bf', 8)), _username, _mobile_number,
             _address, _occupation, _image, _motto, _bank_account, _birthday, _sex);
+    select max(user_id)
+        from users
 $$ language sql;
 
 create trigger take_log after insert or update or delete on users

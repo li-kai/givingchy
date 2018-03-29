@@ -63,9 +63,11 @@ end
 $$ language plpgsql;
 
 create or replace function create_comment(_user_id int, _project_id int, _content text)
-returns void as $$
+returns integer as $$
     insert into comments(user_id, project_id, content)
         values(_user_id, _project_id, _content);
+    select max(id)
+        from comments;
 $$ language sql;
 
 create or replace function update_comment(_comment_id int, _content text)
