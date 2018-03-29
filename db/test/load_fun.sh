@@ -6,11 +6,11 @@ then
     echo '       2. Press enter until end'
     echo 'eg. ./load_function.sh cs2102project'
 else
-    psql -s -d $1 -f ../1_log.sql
+    psql -d $1 -f ../1_log.sql
     psql -d $1 -f ../categories.sql
     psql -d $1 -f ../comments.sql
-    psql -d $1 -f ../payments.sql
+    psql -s -d $1 -f ../payments.sql
     psql -d $1 -f ../projects.sql
-    psql -s -d $1 -f ../users.sql
+    psql -d $1 -f ../users.sql
     echo 'load done.'
 fi

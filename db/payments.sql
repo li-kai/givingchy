@@ -1,5 +1,6 @@
 drop type if exists payments_row cascade;
 drop trigger if exists take_log on payments;
+drop trigger if exists donate_trigger on payments;
 
 create type payments_row as (
     id int,
@@ -85,3 +86,43 @@ $$ language sql;
 
 create trigger take_log after insert or update or delete on payments
 for each row execute procedure create_log(' on payments');
+
+create or replace function donate_trigger()
+returns trigger as $$
+begin
+    if (tg_op = 'DELETE') then
+        update users
+            set total_donation = total_donation - old.amount
+            where user_id = old.user_id;
+        update projects
+            set amount_raised = amount_raised - old.amount
+            where project_id = old.project_id;
+        return old;
+    elsif (tg_op = 'UPDATE') then
+        update users
+            set total_donation = total_donation - old.amount
+            where user_id = old.user_id;
+        update projects
+            set amount_raised = amount_raised - old.amount
+            where project_id = old.project_id;
+        update users
+            set total_donation = total_donation + new.amount
+            where user_id = new.user_id;
+        update projects
+            set amount_raised = amount_raised + new.amount
+            where project_id = new.project_id;
+        return new;
+    elsif (tg_op = 'INSERT') then
+        update users
+            set total_donation = total_donation + new.amount
+            where user_id = new.user_id;
+        update projects
+            set amount_raised = amount_raised + new.amount
+            where project_id = new.project_id;
+        return new;
+    end if;
+end;
+$$ language plpgsql;
+
+create trigger donate after insert or update or delete on payments
+for each row execute procedure donate_trigger();
