@@ -8,14 +8,22 @@ import (
 type Project struct {
 	ID             int       `json:"id"`
 	Title          string    `json:"title"`
+	UserID         int       `json:"userId"`
+	Category       string    `json:"category"`
 	Description    string    `json:"description"`
+	Likes          int       `json:"likes"`
+	Verified       bool      `json:"verified"`
+	Image          string    `json:"image"`
+	Reward         string    `json:"reward"`
+	URL            string    `json:"url"`
+	PplViewNum     int       `json:"pplViewNum"`
+	PplAttendNum   int       `json:"pplAttendNum"`
+	BankInfo       string    `json:"bankInfo"`
+	Compeleted     bool      `json:"completed"`
+	AmountRaised   float64   `json:"amountRaised"`
+	AmountRequired float64   `json:"amountRequired"`
 	StartTime      time.Time `json:"startTime"`
 	EndTime        time.Time `json:"endTime"`
-	Verified       bool      `json:"verified"`
-	AmountRequired float64   `json:"amountRequired"`
-	AmountRaised   float64   `json:"amountRaised"`
-	Category       string    `json:"category"`
-	UserID         int       `json:"userId"`
 }
 
 // AllProjects gets all projects in db
@@ -34,14 +42,22 @@ func (db *DB) AllProjects() ([]*Project, error) {
 		if err := rows.Scan(
 			&project.ID,
 			&project.Title,
+			&project.UserID,
+			&project.Category,
 			&project.Description,
+			&project.Likes,
+			&project.Verified,
+			&project.Image,
+			&project.Reward,
+			&project.URL,
+			&project.PplViewNum,
+			&project.PplAttendNum,
+			&project.BankInfo,
+			&project.Compeleted,
+			&project.AmountRaised,
+			&project.AmountRequired,
 			&project.StartTime,
 			&project.EndTime,
-			&project.AmountRequired,
-			&project.AmountRaised,
-			&project.Verified,
-			&project.Category,
-			&project.UserID,
 		); err != nil {
 			return nil, err
 		}
@@ -54,16 +70,21 @@ func (db *DB) AllProjects() ([]*Project, error) {
 // CreateProject creates a funding project
 func (db *DB) CreateProject(
 	title string,
+	userID int,
+	category string,
 	description string,
+	image string,
+	reward string,
+	URL string,
+	bankInfo string,
 	amountRequired float64,
 	endTime time.Time,
-	category string,
-	userID int,
 ) (int, error) {
 	id := 0
 	err := db.QueryRow(`
-        select create_project($1, $2, $3, $4, $5, $6)
-    `, title, description, amountRequired, endTime, category, userID,
+        select create_project($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+	`, title, userID, category, description, image, reward, 
+		URL, bankInfo, amountRequired, endTime
 	).Scan(&id)
 	return id, err
 }
@@ -77,14 +98,22 @@ func (db *DB) GetProject(id string) (*Project, error) {
 	).Scan(
 		&project.ID,
 		&project.Title,
+		&project.UserID,
+		&project.Category,
 		&project.Description,
+		&project.Likes,
+		&project.Verified,
+		&project.Image,
+		&project.Reward,
+		&project.URL,
+		&project.PplViewNum,
+		&project.PplAttendNum,
+		&project.BankInfo,
+		&project.Compeleted,
+		&project.AmountRaised,
+		&project.AmountRequired,
 		&project.StartTime,
 		&project.EndTime,
-		&project.AmountRequired,
-		&project.AmountRaised,
-		&project.Verified,
-		&project.Category,
-		&project.UserID,
 	)
 	return &project, err
 }

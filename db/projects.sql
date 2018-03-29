@@ -4,14 +4,22 @@ drop trigger if exists take_log on projects;
 create type project_row as (
     project_id int,
     title varchar(100),
-    description text,
-    start_time timestamp,
-    end_time timestamp,
-    amount_required numeric,
-    amount_raised numeric,
-    verified boolean,
+    user_id int,
     category citext,
-    user_id int
+    description text,
+    likes int,
+    verified boolean,
+    image citext,
+    reward citext,
+    URL citext,
+    people_viewed_number int,
+    people_attend_number int,
+    bank_info citext,
+    compeleted boolean,
+    amount_raised numeric,
+    amount_required numeric,
+    start_time timestamp,
+    end_time timestamp
 );
 
 create or replace function all_projects()
@@ -22,19 +30,8 @@ begin
     insert into logs(content, log_level)
         values ('Select all projects', 1);
     for proj in
-        -- WITH total_funds AS (
-        --     SELECT project_id, sum(amount) AS raised
-        --     FROM payments
-        --     GROUP BY project_id
-        -- )
-        -- SELECT p.project_id, p.title, p.description,
-        --        p.start_time, p.end_time,
-        --        p.amount_required, COALESCE(f.raised, 0) as amount_raised,
-        --        p.verified, p.category, p.user_id
-        -- FROM projects p LEFT OUTER JOIN total_funds f
-        -- ON p.project_id = f.project_id
         select *
-        from whole_project_info
+        from projects
     loop
         return next proj;
     end loop;
@@ -44,14 +41,20 @@ $$ language plpgsql;
 
 create or replace function create_project(
     _title varchar(100),
-    _description text,
-    _amount_required numeric,
-    _end_time timestamp,
+    _user_id int,
     _category citext,
-    _user_id int)
+    _description text,
+    _image citext,
+    _reward citext,
+    _URL citext,
+    _bank_info citext,
+    _amount_required numeric,
+    _end_time timestamp)
 returns void as $$
-    insert into projects (title, description, amount_required, end_time, category, user_id)
-        values (_title, _description, _amount_required, _end_time, _category, _user_id);
+    insert into projects (title, user_id, category, description, image, reward, URL, bank_info,
+            amount_required, end_time)
+        values (_title, _user_id, _category, _description, _image, _reward, _URL, _bank_info,
+            _amount_required, _end_time);
 $$ language sql;
 
 create or replace function get_project(_project_id int)
@@ -62,7 +65,7 @@ begin
     insert into logs(project_id, content, log_level)
         values (_project_id, 'Select project', 1);
     select *
-        from whole_project_info
+        from projects
         into proj_row
         where project_id = $1;
     return proj_row;
