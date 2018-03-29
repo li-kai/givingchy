@@ -55,7 +55,7 @@ select create_payment((
 select update_payment((
     select max(id)
     from payments
-), 30.0);
+), 300.0);
 select * from all_project_payments((
     select max(project_id)
     from projects

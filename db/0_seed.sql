@@ -44,7 +44,7 @@ create table if not exists projects (
     people_viewed_number integer not null default 0,
     people_attend_number integer not null default 0,
     bank_info citext not null,
-    compeleted boolean not null default false,
+    completed boolean not null default false,
     amount_raised numeric(10, 2) not null check (amount_raised >= 0) default 0,
     amount_required numeric(10, 2) not null check (amount_required > 0), --10 sf, 2dp--
     start_time timestamp not null default now(),

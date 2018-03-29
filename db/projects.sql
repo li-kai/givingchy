@@ -15,7 +15,7 @@ create type project_row as (
     people_viewed_number int,
     people_attend_number int,
     bank_info citext,
-    compeleted boolean,
+    completed boolean,
     amount_raised numeric,
     amount_required numeric,
     start_time timestamp,
@@ -76,3 +76,24 @@ $$ language plpgsql;
 
 create trigger take_log after insert or update or delete on projects
 for each row execute procedure create_log(' on projects');
+
+create or replace function complete_trigger()
+returns trigger as $$
+begin
+    if (old.amount_raised != new.amount_raised) then
+        if (new.amount_raised >= new.amount_required) then
+            update projects
+                set completed = true
+                where project_id = new.project_id;
+        else 
+            update projects
+                set completed = false
+                where project_id = new.project_id;
+        end if;
+    end if;
+    return new;
+end
+$$ language plpgsql;
+
+create trigger complete_proj after update on projects
+for each row execute procedure complete_trigger();

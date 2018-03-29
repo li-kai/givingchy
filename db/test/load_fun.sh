@@ -9,8 +9,8 @@ else
     psql -d $1 -f ../1_log.sql
     psql -d $1 -f ../categories.sql
     psql -d $1 -f ../comments.sql
-    psql -s -d $1 -f ../payments.sql
-    psql -d $1 -f ../projects.sql
+    psql -d $1 -f ../payments.sql
+    psql -s -d $1 -f ../projects.sql
     psql -d $1 -f ../users.sql
     echo 'load done.'
 fi
