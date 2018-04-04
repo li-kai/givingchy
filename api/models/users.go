@@ -2,13 +2,13 @@ package models
 
 // User represents one user
 type User struct {
-	ID             int       `json:"id"`
-	Email          string    `json:"email"`
-	Username       string    `json:"username"`
-	TotalDonation  float64   `json:"totalDonation"`
-	Image          string    `json:"image"`
-	IsAdmin        bool      `json:"isAdmin"`
-	// Password       string    `json:"password,omitempty"`
+	ID            int     `json:"id"`
+	Email         string  `json:"email"`
+	Username      string  `json:"username"`
+	TotalDonation float64 `json:"totalDonation"`
+	Image         string  `json:"image"`
+	IsAdmin       bool    `json:"isAdmin"`
+	Password      string  `json:"password,omitempty"`
 }
 
 // AllUsers gets all users in db
@@ -46,7 +46,7 @@ func (db *DB) GetUser(email string, password string) (*User, error) {
 	err := db.QueryRow(`
         select * from get_user($1, $2)
     `, email, password,
-	).Scan(			
+	).Scan(
 		&u.ID,
 		&u.Email,
 		&u.Username,
@@ -62,15 +62,15 @@ func (db *DB) GetUser(email string, password string) (*User, error) {
 
 // CreateUser creates a non-admin user given email and password
 func (db *DB) CreateUser(
-    email string, 
-    password string,
-    username string,
-    image string,
+	email string,
+	password string,
+	username string,
+	image string,
 ) (int, error) {
 	id := 0
 	err := db.QueryRow(`
-		select create_user($1, $2, $3, $4)	
-		`,email, password, username, image
+		select create_user($1, $2, $3, $4)
+		`, email, password, username, image,
 	).Scan(&id)
 	return id, err
 }

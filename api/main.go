@@ -93,11 +93,12 @@ func (env *Env) getProjectComments(w http.ResponseWriter, r *http.Request) {
 
 type projectRequest struct {
 	Title          string    `json:"title"`
+	UserID         int       `json:"userId"`
+	Category       string    `json:"category"`
 	Description    string    `json:"description"`
+	Image          string    `json:"image"`
 	AmountRequired float64   `json:"amountRequired"`
 	EndTime        time.Time `json:"endTime"`
-	Category       string    `json:"category"`
-	UserID         int       `json:"userId"`
 }
 
 func (env *Env) createProject(w http.ResponseWriter, r *http.Request) {
@@ -110,11 +111,12 @@ func (env *Env) createProject(w http.ResponseWriter, r *http.Request) {
 	}
 	projectID, err := env.db.CreateProject(
 		project.Title,
+		project.UserID,
+		project.Category,
 		project.Description,
+		project.Image,
 		project.AmountRequired,
 		project.EndTime,
-		project.Category,
-		project.UserID,
 	)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
@@ -137,6 +139,8 @@ func (env *Env) getUsers(w http.ResponseWriter, r *http.Request) {
 type userRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+	Username string `json:"username"`
+	Image    string `json:"image"`
 }
 
 func (env *Env) createUser(w http.ResponseWriter, r *http.Request) {
@@ -147,7 +151,7 @@ func (env *Env) createUser(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	userID, err := env.db.CreateUser(u.Email, u.Password)
+	userID, err := env.db.CreateUser(u.Email, u.Password, u.Username, u.Image)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return

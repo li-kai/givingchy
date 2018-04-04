@@ -16,17 +16,18 @@ type Datastore interface {
 	AllProjects() ([]*Project, error)
 	CreateProject(
 		title string,
+		userID int,
+		category string,
 		description string,
+		image string,
 		amountRequired float64,
 		endTime time.Time,
-		category string,
-		userID int,
 	) (int, error)
 	GetProject(id string) (*Project, error)
 
 	AllUsers() ([]*User, error)
 	GetUser(email string, password string) (*User, error)
-	CreateUser(email string, password string) (int, error)
+	CreateUser(email string, password string, username string, image string) (int, error)
 
 	AllCategories() ([]*Category, error)
 	CreateCategory(name string) error

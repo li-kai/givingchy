@@ -37,7 +37,7 @@ func (db *DB) AllProjects() ([]*Project, error) {
 			&project.Title,
 			&project.UserID,
 			&project.Category,
-			&project.Description,	
+			&project.Description,
 			&project.Verified,
 			&project.Image,
 			&project.AmountRaised,
@@ -66,7 +66,7 @@ func (db *DB) CreateProject(
 	id := 0
 	err := db.QueryRow(`
         select create_project($1, $2, $3, $4, $5, $6, $7)
-	`, title, userID, category, description, image, amountRequired, endTime
+	`, title, userID, category, description, image, amountRequired, endTime,
 	).Scan(&id)
 	return id, err
 }
@@ -82,7 +82,7 @@ func (db *DB) GetProject(id string) (*Project, error) {
 		&project.Title,
 		&project.UserID,
 		&project.Category,
-		&project.Description,	
+		&project.Description,
 		&project.Verified,
 		&project.Image,
 		&project.AmountRaised,
@@ -92,54 +92,3 @@ func (db *DB) GetProject(id string) (*Project, error) {
 	)
 	return &project, err
 }
-
-/*
-func (p *project) getProject(db *sql.DB) error {
-	return db.QueryRow("SELECT name, price FROM projects WHERE id=$1",
-		p.ID).Scan(&project.Name, &project.Price)
-}
-
-func (p *project) updateProject(db *sql.DB) error {
-	_, err :=
-		db.Exec("UPDATE projects SET name=$1, price=$2 WHERE id=$3",
-			p.Name, p.Price, p.ID)
-
-	return err
-}
-
-func (p *project) deleteProject(db *sql.DB) error {
-	_, err := db.Exec("DELETE FROM projects WHERE id=$1", p.ID)
-
-	return err
-}
-
-func (p *project) createProject(db *sql.DB) error {
-	return db.QueryRow(
-		"INSERT INTO projects(name, price) VALUES($1, $2) RETURNING id",
-		p.Name, p.Price).Scan(&project.ID)
-}
-
-func getProjects(db *sql.DB, start, count int) ([]project, error) {
-	rows, err := db.Query(
-		"SELECT id, name,  price FROM projects LIMIT $1 OFFSET $2",
-		count, start)
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer rows.Close()
-
-	projects := []project{}
-
-	for rows.Next() {
-		var p project
-		if err := rows.Scan(&project.ID, &project.Name, &project.Price); err != nil {
-			return nil, err
-		}
-		projects = append(projects, p)
-	}
-
-	return projects, nil
-}
-*/
