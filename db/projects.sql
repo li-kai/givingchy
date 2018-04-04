@@ -63,4 +63,4 @@ end
 $$ language plpgsql;
 
 create trigger take_log after insert or update or delete on projects
-for each row execute procedure create_log(' on projects');
+for each row execute procedure create_log_user_proj(' on projects');

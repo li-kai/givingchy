@@ -55,4 +55,4 @@ returns integer as $$
 $$ language sql;
 
 create trigger take_log after insert or update or delete on users
-for each row execute procedure create_log(' on users');
+for each row execute procedure create_log_user(' on users');
