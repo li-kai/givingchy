@@ -6,16 +6,9 @@ type User struct {
 	Email          string    `json:"email"`
 	Username       string    `json:"username"`
 	TotalDonation  float64   `json:"totalDonation"`
-	MobileNumber   string    `json:"mobileNumber"`
-	Address        string    `json:"address"`
-	Occupation     string    `json:"occupation"`
 	Image          string    `json:"image"`
-	Motto          string    `json:"motto"`
 	IsAdmin        bool      `json:"isAdmin"`
-	BankAccount    string    `json:"bankAccount"`
-	Birthday       time.Time `json:"birthday"`
-	Sex            string    `json:"sex"`
-	Password       string    `json:"password,omitempty"`
+	// Password       string    `json:"password,omitempty"`
 }
 
 // AllUsers gets all users in db
@@ -36,15 +29,8 @@ func (db *DB) AllUsers() ([]*User, error) {
 			&u.Email,
 			&u.Username,
 			&u.TotalDonation,
-			&u.MobileNumber,
-			&u.Address,
-			&u.Occupation,
 			&u.Image,
-			&u.Motto,
 			&u.IsAdmin,
-			&u.BankAccount,
-			&u.Birthday,
-			&u.Sex,
 		); err != nil {
 			return nil, err
 		}
@@ -65,15 +51,8 @@ func (db *DB) GetUser(email string, password string) (*User, error) {
 		&u.Email,
 		&u.Username,
 		&u.TotalDonation,
-		&u.MobileNumber,
-		&u.Address,
-		&u.Occupation,
 		&u.Image,
-		&u.Motto,
 		&u.IsAdmin,
-		&u.BankAccount,
-		&u.Birthday,
-		&u.Sex,
 	)
 	if err != nil {
 		return nil, err
@@ -86,20 +65,12 @@ func (db *DB) CreateUser(
     email string, 
     password string,
     username string,
-    mobile_number string,
-    address string,
-    occupation string,
     image string,
-    motto string,
-    bank_account string,
-    birthday time.Time,
-    sex string,
 ) (int, error) {
 	id := 0
 	err := db.QueryRow(`
-		select create_user($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)	
-		`,email, password, username, mobile_number, address, occupation, 
-			image, motto, bank_account, birthday, sex
+		select create_user($1, $2, $3, $4)	
+		`,email, password, username, image
 	).Scan(&id)
 	return id, err
 }

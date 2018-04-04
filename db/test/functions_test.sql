@@ -7,9 +7,9 @@ delete from users;
 
 -- test for users.sql
 
-select create_user('1@gmail.com', '123', '1', '1', null, null, null, null, null, null, null);
-select create_user('2@gmail.com', '1234', '2', '2', null, null, null, null, null, null, null);
-select create_user('3@gmail.com', '12345', '3', '3', null, null, null, null, null, null, null);
+select create_user('1@gmail.com', '123', '1', '1');
+select create_user('2@gmail.com', '1234', '2', '2');
+select create_user('3@gmail.com', '12345', '3', '3');
 select * from all_users();
 select * from get_user('1@gmail.com', '123');
 delete from users where email = '3@gmail.com';
@@ -25,11 +25,11 @@ select * from all_categories();
 select create_project('hello', (
     select max(user_id) - 1
     from users
-), 'Art', 'hello', null, null, null, '1', 100.0, '2018-08-20 14:52:49'::timestamp);
+), 'Art', 'hello', '1', 100.0, '2018-08-20 14:52:49'::timestamp);
 select create_project('bye', (
     select max(user_id) - 1
     from users
-), 'Art', 'bye', null, null, null, '1', 100.0, '2018-08-20 14:52:49'::timestamp);
+), 'Art', 'bye', '1', 100.0, '2018-08-20 14:52:49'::timestamp);
 select * from all_projects();
 select * from get_project((
     select max(project_id)

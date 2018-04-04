@@ -84,4 +84,4 @@ returns void as $$
 $$ language sql;
 
 create trigger take_log after insert or update or delete on comments
-for each row execute procedure create_log(' on comments');
+for each row execute procedure create_log_user_proj(' on comments');
