@@ -7,6 +7,7 @@ drop table if exists projects cascade;
 drop table if exists payments cascade;
 drop table if exists comments cascade;
 drop table if exists logs cascade;
+drop table if exists tags cascade;
 -- drop view if exists whole_project_info cascade;
 
 create table if not exists users (
@@ -15,15 +16,8 @@ create table if not exists users (
     password varchar(255) not null,
     username citext not null,
     total_donation numeric(10, 2) not null default 0,
-    mobile_number citext unique not null,
-    address citext,
-    occupation citext,
     image citext,
-    motto citext,
-    is_admin boolean not null default false,
-    bank_account citext,
-    birthday timestamp,
-    sex varchar(10)
+    is_admin boolean not null default false
 );
 
 create table if not exists categories (
@@ -36,19 +30,18 @@ create table if not exists projects (
     user_id integer not null references users (user_id) on update cascade,
     category citext not null references categories (name) on update cascade,
     description text not null,
-    likes integer not null default 0,
     verified boolean not null default false,
     image citext,
-    reward citext,
-    URL citext,
-    people_viewed_number integer not null default 0,
-    people_attend_number integer not null default 0,
-    bank_info citext not null,
-    completed boolean not null default false,
     amount_raised numeric(10, 2) not null check (amount_raised >= 0) default 0,
     amount_required numeric(10, 2) not null check (amount_required > 0), --10 sf, 2dp--
     start_time timestamp not null default now(),
     end_time timestamp not null check (start_time <= end_time)
+);
+
+create table if not exists tags(
+    project_id integer not null references projects (project_id) on update cascade,
+    tags citext not null,
+    primary key(project_id, tags)
 );
 
 create table if not exists payments (

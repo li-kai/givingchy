@@ -6,15 +6,8 @@ create type user_row as (
     email citext,
     username citext,
     total_donation numeric(10, 2),
-    mobile_number citext,
-    address citext,
-    occupation citext,
     image citext,
-    motto citext,
-    is_admin boolean,
-    bank_account citext,
-    birthday timestamp,
-    sex varchar(10)
+    is_admin boolean
 );
 
 create or replace function all_users()
@@ -25,8 +18,7 @@ begin
     insert into logs(content, log_level)
         values ('Select all users', 1);
     for usr in
-        select user_id, email, username, total_donation, mobile_number, address, 
-            occupation, image, motto, is_admin, bank_account, birthday, sex
+        select user_id, email, username, total_donation, image, is_admin
         from users
     loop
         return next usr;
@@ -40,8 +32,7 @@ returns user_row as $$
 declare
     usr user_row%rowtype;
 begin
-    select user_id, email, username, total_donation, mobile_number, address, 
-            occupation, image, motto, is_admin, bank_account, birthday, sex
+    select user_id, email, username, total_donation, image, is_admin
         into usr
         from users
         where email = _email and password = crypt(_password, password);
@@ -55,19 +46,10 @@ create or replace function create_user(
     _email citext, 
     _password varchar(255),
     _username citext,
-    _mobile_number citext,
-    _address citext,
-    _occupation citext,
-    _image citext,
-    _motto citext,
-    _bank_account citext,
-    _birthday timestamp,
-    _sex varchar(10))
+    _image citext)
 returns integer as $$
-    INSERT INTO users (email, password, username, mobile_number, address, occupation, 
-            image, motto, bank_account, birthday, sex)
-        VALUES(_email, crypt(_password, gen_salt('bf', 8)), _username, _mobile_number,
-            _address, _occupation, _image, _motto, _bank_account, _birthday, _sex);
+    INSERT INTO users (email, password, username, image)
+        VALUES(_email, crypt(_password, gen_salt('bf', 8)), _username, _image);
     select max(user_id)
         from users
 $$ language sql;
