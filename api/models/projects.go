@@ -11,15 +11,8 @@ type Project struct {
 	UserID         int       `json:"userId"`
 	Category       string    `json:"category"`
 	Description    string    `json:"description"`
-	Likes          int       `json:"likes"`
 	Verified       bool      `json:"verified"`
 	Image          string    `json:"image"`
-	Reward         string    `json:"reward"`
-	URL            string    `json:"url"`
-	PplViewNum     int       `json:"pplViewNum"`
-	PplAttendNum   int       `json:"pplAttendNum"`
-	BankInfo       string    `json:"bankInfo"`
-	Compeleted     bool      `json:"completed"`
 	AmountRaised   float64   `json:"amountRaised"`
 	AmountRequired float64   `json:"amountRequired"`
 	StartTime      time.Time `json:"startTime"`
@@ -44,16 +37,9 @@ func (db *DB) AllProjects() ([]*Project, error) {
 			&project.Title,
 			&project.UserID,
 			&project.Category,
-			&project.Description,
-			&project.Likes,
+			&project.Description,	
 			&project.Verified,
 			&project.Image,
-			&project.Reward,
-			&project.URL,
-			&project.PplViewNum,
-			&project.PplAttendNum,
-			&project.BankInfo,
-			&project.Compeleted,
 			&project.AmountRaised,
 			&project.AmountRequired,
 			&project.StartTime,
@@ -74,17 +60,13 @@ func (db *DB) CreateProject(
 	category string,
 	description string,
 	image string,
-	reward string,
-	URL string,
-	bankInfo string,
 	amountRequired float64,
 	endTime time.Time,
 ) (int, error) {
 	id := 0
 	err := db.QueryRow(`
-        select create_project($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-	`, title, userID, category, description, image, reward, 
-		URL, bankInfo, amountRequired, endTime
+        select create_project($1, $2, $3, $4, $5, $6, $7)
+	`, title, userID, category, description, image, amountRequired, endTime
 	).Scan(&id)
 	return id, err
 }
@@ -100,16 +82,9 @@ func (db *DB) GetProject(id string) (*Project, error) {
 		&project.Title,
 		&project.UserID,
 		&project.Category,
-		&project.Description,
-		&project.Likes,
+		&project.Description,	
 		&project.Verified,
 		&project.Image,
-		&project.Reward,
-		&project.URL,
-		&project.PplViewNum,
-		&project.PplAttendNum,
-		&project.BankInfo,
-		&project.Compeleted,
 		&project.AmountRaised,
 		&project.AmountRequired,
 		&project.StartTime,
