@@ -7,7 +7,7 @@ drop table if exists projects cascade;
 drop table if exists payments cascade;
 drop table if exists comments cascade;
 drop table if exists logs cascade;
-drop table if exists tags cascade;
+drop table tags cascade;
 -- drop view if exists whole_project_info cascade;
 
 create table if not exists users (
@@ -40,8 +40,8 @@ create table if not exists projects (
 
 create table if not exists tags(
     project_id integer not null references projects (project_id) on update cascade,
-    tags citext not null,
-    primary key(project_id, tags)
+    tag_name citext not null,
+    primary key(project_id, tag_name)
 );
 
 create table if not exists payments (

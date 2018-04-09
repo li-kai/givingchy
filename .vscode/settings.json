@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.inc": "fortran-modern",
+        "locale": "c"
+    }
+}

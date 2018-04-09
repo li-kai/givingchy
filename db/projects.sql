@@ -57,7 +57,7 @@ begin
     select *
         from projects
         into proj_row
-        where project_id = $1;
+        where project_id = _project_id;
     return proj_row;
 end
 $$ language plpgsql;
