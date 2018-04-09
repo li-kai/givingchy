@@ -66,6 +66,7 @@ select * from get_project((
     select max(project_id)
     from projects
 ));
+select * from search_project('llo', 3, 2);
 
 
 -- test for payments.sql

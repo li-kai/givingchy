@@ -44,8 +44,8 @@ declare
     pay_row_cursor refcursor;
     i int;
 begin
-    insert into logs(content, log_level)
-        values ('Select all payments', 1);
+    insert into logs(project_id, content, log_level)
+        values (_project_id, 'Select project_s payments', 1);
     open pay_row_cursor for
         select *
         from payments
@@ -72,8 +72,8 @@ declare
     pay_row_cursor refcursor;
     i int;
 begin
-    insert into logs(content, log_level)
-        values ('Select all payments', 1);
+    insert into logs(user_id, content, log_level)
+        values (_user_id, 'Select all payments', 1);
     open pay_row_cursor for
         select *
         from payments

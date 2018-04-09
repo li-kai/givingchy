@@ -43,8 +43,8 @@ declare
     comm_row_cursor refcursor;
     i int;
 begin
-    insert into logs(content, log_level)
-        values ('Select all comments', 1);
+    insert into logs(project_id, content, log_level)
+        values (_project_id, 'Select project_s comments', 1);
     open comm_row_cursor for
         select *
         from comments
@@ -71,8 +71,8 @@ declare
     comm_row_cursor refcursor;
     i int;
 begin
-    insert into logs(content, log_level)
-        values ('Select all comments', 1);
+    insert into logs(user_id, content, log_level)
+        values (_user_id, 'Select user_s comments', 1);
     open comm_row_cursor for
         select *
         from comments

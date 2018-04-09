@@ -43,6 +43,35 @@ begin
 end
 $$ language plpgsql;
 
+create or replace function search_project(_keyword citext, _num_per_page int, _idx_page int)
+returns setof project_row as $$
+declare
+    proj project_row%rowtype;
+    proj_row_cursor refcursor;
+    i int;
+begin
+    insert into logs(content, log_level)
+        values ('Search projects', 1);
+    open proj_row_cursor for 
+        select *
+        from projects
+        where title like '%' || _keyword || '%';
+    move absolute (_idx_page - 1) * _num_per_page from proj_row_cursor;
+    i := 0;
+    loop
+        if i >= _num_per_page then
+            exit;
+        end if;
+        i := i + 1;
+        fetch proj_row_cursor into proj;
+        return next proj;
+    end loop;
+    close proj_row_cursor;
+    return;
+end
+$$ language plpgsql;
+
+
 create or replace function create_project(
     _title varchar(100),
     _user_id int,
