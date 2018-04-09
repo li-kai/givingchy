@@ -7,17 +7,17 @@ create type tag_row as (
 );
 
 create or replace function all_tags()
-returns setof tag_row as $$
+returns setof citext as $$
 declare 
-    tag_name tag_row%rowtype;
+    _tag_name citext;
 begin
     insert into logs(content, log_level)
         values ('Select all tags', 1);
-    for tag_name in
-        select distinct tags
+    for _tag_name in
+        select distinct tag_name
         from tags
     loop
-        return next tag_name;
+        return next _tag_name;
     end loop;
     return;
 end
@@ -34,9 +34,9 @@ $$ language sql;
 
 create or replace function get_project_s_tags(
     _project_id int)
-returns setof tag_row as $$
+returns setof citext as $$
 declare 
-    _tag_name tag_row%rowtype;
+    _tag_name citext;
 begin
     insert into logs(project_id, content, log_level)
         values (_project_id, 'Select project_s tags', 1);

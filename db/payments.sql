@@ -1,6 +1,6 @@
 drop type if exists payments_row cascade;
 drop trigger if exists take_log on payments;
-drop trigger if exists donate_trigger on payments;
+drop trigger if exists donate on payments;
 
 create type payments_row as (
     id int,

@@ -1,5 +1,6 @@
 drop type if exists project_row cascade;
 drop trigger if exists take_log on projects;
+drop trigger if exists update_cate on projects;
 
 create type project_row as (
     project_id int,
@@ -61,6 +62,35 @@ begin
     return proj_row;
 end
 $$ language plpgsql;
+
+create or replace function update_cate_num()
+returns trigger as $$
+begin
+    if (tg_op = 'DELETE') then
+        update categories
+            set proj_num = proj_num - 1
+            where name = old.category;
+        return old;
+    elsif (tg_op = 'UPDATE') then
+        update categories
+            set proj_num = proj_num - 1
+            where name = old.category;
+        update categories
+            set proj_num = proj_num + 1
+            where name = new.category;
+        return new;
+    elsif (tg_op = 'INSERT') then
+        update categories
+            set proj_num = proj_num + 1
+            where name = new.category;
+        return new;
+    end if;
+    return null;
+end
+$$ language plpgsql;
+
+create trigger update_cate after insert or delete on projects
+for each row execute procedure update_cate_num();
 
 create trigger take_log after insert or update or delete on projects
 for each row execute procedure create_log_user_proj(' on projects');
