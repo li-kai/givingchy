@@ -8,7 +8,6 @@ drop table if exists payments cascade;
 drop table if exists comments cascade;
 drop table if exists logs cascade;
 drop table if exists tags cascade;
--- drop view if exists whole_project_info cascade;
 
 create table if not exists users (
     user_id serial primary key,
@@ -21,14 +20,15 @@ create table if not exists users (
 );
 
 create table if not exists categories (
-    name citext unique primary key
+    name citext unique primary key,
+    proj_num integer not null default 0 check (proj_num >= 0)
 );
 
 create table if not exists projects (
     project_id serial primary key,
     title varchar(100) not null,
-    user_id integer not null references users (user_id) on update cascade,
-    category citext not null references categories (name) on update cascade,
+    user_id integer not null references users (user_id) on update cascade on delete cascade,
+    category citext not null references categories (name) on update cascade on delete cascade,
     description text not null,
     verified boolean not null default false,
     image citext,
@@ -39,23 +39,23 @@ create table if not exists projects (
 );
 
 create table if not exists tags(
-    project_id integer not null references projects (project_id) on update cascade,
-    tags citext not null,
-    primary key(project_id, tags)
+    project_id integer not null references projects (project_id) on update cascade on delete cascade,
+    tag_name citext not null,
+    primary key(project_id, tag_name)
 );
 
 create table if not exists payments (
     id serial primary key,
-    user_id integer not null references users (user_id) on update cascade,
-    project_id integer not null references projects (project_id) on update cascade,
+    user_id integer not null references users (user_id) on update cascade on delete cascade,
+    project_id integer not null references projects (project_id) on update cascade on delete cascade,
     moment timestamp not null default now(),
     amount numeric(10, 2) not null check (amount > 0) --10 sf, 2dp--
 );
 
 create table if not exists comments (
     id serial primary key,
-    user_id integer not null references users (user_id) on update cascade,
-    project_id integer not null references projects (project_id) on update cascade,
+    user_id integer not null references users (user_id) on update cascade on delete cascade,
+    project_id integer not null references projects (project_id) on update cascade on delete cascade,
     moment timestamp not null default now(),
     content text not null
 );

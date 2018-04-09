@@ -1,5 +1,6 @@
 drop type if exists project_row cascade;
 drop trigger if exists take_log on projects;
+drop trigger if exists update_cate on projects;
 
 create type project_row as (
     project_id int,
@@ -15,22 +16,61 @@ create type project_row as (
     end_time timestamp
 );
 
-create or replace function all_projects()
+create or replace function all_projects(_num_per_page int, _idx_page int)
 returns setof project_row as $$
 declare
     proj project_row%rowtype;
+    proj_row_cursor refcursor;
+    i int;
 begin
     insert into logs(content, log_level)
         values ('Select all projects', 1);
-    for proj in
+    open proj_row_cursor for 
         select *
-        from projects
+        from projects;
+    move absolute (_idx_page - 1) * _num_per_page from proj_row_cursor;
+    i := 0;
     loop
+        if i >= _num_per_page then
+            exit;
+        end if;
+        i := i + 1;
+        fetch proj_row_cursor into proj;
         return next proj;
     end loop;
+    close proj_row_cursor;
     return;
 end
 $$ language plpgsql;
+
+create or replace function search_project(_keyword citext, _num_per_page int, _idx_page int)
+returns setof project_row as $$
+declare
+    proj project_row%rowtype;
+    proj_row_cursor refcursor;
+    i int;
+begin
+    insert into logs(content, log_level)
+        values ('Search projects', 1);
+    open proj_row_cursor for 
+        select *
+        from projects
+        where title like '%' || _keyword || '%';
+    move absolute (_idx_page - 1) * _num_per_page from proj_row_cursor;
+    i := 0;
+    loop
+        if i >= _num_per_page then
+            exit;
+        end if;
+        i := i + 1;
+        fetch proj_row_cursor into proj;
+        return next proj;
+    end loop;
+    close proj_row_cursor;
+    return;
+end
+$$ language plpgsql;
+
 
 create or replace function create_project(
     _title varchar(100),
@@ -57,10 +97,39 @@ begin
     select *
         from projects
         into proj_row
-        where project_id = $1;
+        where project_id = _project_id;
     return proj_row;
 end
 $$ language plpgsql;
+
+create or replace function update_cate_num()
+returns trigger as $$
+begin
+    if (tg_op = 'DELETE') then
+        update categories
+            set proj_num = proj_num - 1
+            where name = old.category;
+        return old;
+    elsif (tg_op = 'UPDATE') then
+        update categories
+            set proj_num = proj_num - 1
+            where name = old.category;
+        update categories
+            set proj_num = proj_num + 1
+            where name = new.category;
+        return new;
+    elsif (tg_op = 'INSERT') then
+        update categories
+            set proj_num = proj_num + 1
+            where name = new.category;
+        return new;
+    end if;
+    return null;
+end
+$$ language plpgsql;
+
+create trigger update_cate after insert or delete on projects
+for each row execute procedure update_cate_num();
 
 create trigger take_log after insert or update or delete on projects
 for each row execute procedure create_log_user_proj(' on projects');

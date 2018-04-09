@@ -2,7 +2,8 @@ package models
 
 // Category represents one category for projects
 type Category struct {
-	Name string `json:"name"`
+	Name 	string	`json:"name"`
+	ProjNum int		`json:"projNum"`
 }
 
 // AllCategories gets all categories in db
@@ -18,6 +19,7 @@ func (db *DB) AllCategories() ([]*Category, error) {
 		var category Category
 		if err := rows.Scan(
 			&category.Name,
+			&category.ProjNum,
 		); err != nil {
 			return nil, err
 		}
