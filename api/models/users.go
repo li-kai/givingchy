@@ -12,10 +12,10 @@ type User struct {
 }
 
 // AllUsers gets all users in db
-func (db *DB) AllUsers() ([]*User, error) {
+func (db *DB) AllUsers(numPerPage int, pageIdx int) ([]*User, error) {
 	rows, err := db.Query(`
-		select * from all_users()
-		`)
+		select * from all_users($1, $2)
+		`, numPerPage, pageIdx)
 	if err != nil {
 		return nil, err
 	}

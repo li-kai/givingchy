@@ -37,24 +37,24 @@ func readComments(rows *sql.Rows, err error) ([]*Comment, error) {
 }
 
 // AllComments gets all comments in db
-func (db *DB) AllComments() ([]*Comment, error) {
+func (db *DB) AllComments(numPerPage int, pageIdx int) ([]*Comment, error) {
 	return readComments(db.Query(`
-		select * from all_comments()
-		`))
+		select * from all_comments($1, $2)
+		`, numPerPage, pageIdx))
 }
 
 // AllProjectComments gets all comments in db related to project
-func (db *DB) AllProjectComments(projectID int) ([]*Comment, error) {
+func (db *DB) AllProjectComments(projectID int, numPerPage int, pageIdx int) ([]*Comment, error) {
 	return readComments(db.Query(`
-        select * from all_project_comments($1)
-    `, projectID))
+        select * from all_project_comments($1, $2, $3)
+    `, projectID, numPerPage, pageIdx))
 }
 
 // AllUserComments gets all comments in db related to user
-func (db *DB) AllUserComments(userID int) ([]*Comment, error) {
+func (db *DB) AllUserComments(userID int, numPerPage int, pageIdx int) ([]*Comment, error) {
 	return readComments(db.Query(`
-        select * from all_user_comments($1)
-    `, userID))
+        select * from all_user_comments($1, $2, $3)
+    `, userID, numPerPage, pageIdx))
 }
 
 // CreateComment creates a comment given user and project ids

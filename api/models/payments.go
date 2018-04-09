@@ -37,24 +37,24 @@ func readPayments(rows *sql.Rows, err error) ([]*Payment, error) {
 }
 
 // AllPayments gets all payments in db
-func (db *DB) AllPayments() ([]*Payment, error) {
+func (db *DB) AllPayments(numPerPage int, pageIdx int) ([]*Payment, error) {
 	return readPayments(db.Query(`
-		select * from all_payments()
-		`))
+		select * from all_payments($1, $2)
+		`, numPerPage, pageIdx))
 }
 
 // AllProjectPayments gets all payments in db related to project
-func (db *DB) AllProjectPayments(projectID int) ([]*Payment, error) {
+func (db *DB) AllProjectPayments(projectID int, numPerPage int, pageIdx int) ([]*Payment, error) {
 	return readPayments(db.Query(`
-        select * from all_project_payments($1)
-    `, projectID))
+        select * from all_project_payments($1, $2, $3)
+    `, projectID, numPerPage, pageIdx))
 }
 
 // AllUserPayments gets all payments in db related to user
-func (db *DB) AllUserPayments(userID int) ([]*Payment, error) {
+func (db *DB) AllUserPayments(userID int, numPerPage int, pageIdx int) ([]*Payment, error) {
 	return readPayments(db.Query(`
-        select * from all_user_payments($1)
-    `, userID))
+        select * from all_user_payments($1, $2, $3)
+    `, userID, numPerPage, pageIdx))
 }
 
 // CreatePayment creates a payment given user and project ids

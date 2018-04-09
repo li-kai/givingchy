@@ -20,10 +20,10 @@ type Project struct {
 }
 
 // AllProjects gets all projects in db
-func (db *DB) AllProjects() ([]*Project, error) {
+func (db *DB) AllProjects(numPerPage int, pageIdx int) ([]*Project, error) {
 	rows, err := db.Query(`
-		select * from all_projects()
-		`)
+		select * from all_projects($1, $2)
+		`, numPerPage, pageIdx)
 	if err != nil {
 		return nil, err
 	}
