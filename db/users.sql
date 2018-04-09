@@ -10,19 +10,29 @@ create type user_row as (
     is_admin boolean
 );
 
-create or replace function all_users()
+create or replace function all_users(_num_per_page int, _idx_page int)
 returns setof user_row as $$
 declare
     usr user_row%rowtype;
+    usr_row_cursor refcursor;
+    i int;
 begin
     insert into logs(content, log_level)
         values ('Select all users', 1);
-    for usr in
+    open usr_row_cursor for 
         select user_id, email, username, total_donation, image, is_admin
-        from users
+        from users;
+    move absolute (_idx_page - 1) * _num_per_page from usr_row_cursor;
+    i := 0;
     loop
+        if i >= _num_per_page then
+            exit;
+        end if;
+        i := i + 1;
+        fetch usr_row_cursor into usr;
         return next usr;
     end loop;
+    close usr_row_cursor;
     return;
 end
 $$ language plpgsql;

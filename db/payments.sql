@@ -10,55 +10,85 @@ create type payments_row as (
     amount numeric
 );
 
-create or replace function all_payments()
+create or replace function all_payments(_num_per_page int, _idx_page int)
 returns setof payments_row as $$
 declare
     pay payments_row%rowtype;
+    pay_row_cursor refcursor;
+    i int;
 begin
     insert into logs(content, log_level)
         values ('Select all payments', 1);
-    for pay in
+    open pay_row_cursor for
         select *
-        from payments
+        from payments;
+    move absolute (_idx_page - 1) * _num_per_page from pay_row_cursor;
+    i := 0;
     loop
+        if i >= _num_per_page then
+            exit;
+        end if;
+        i := i + 1;
+        fetch pay_row_cursor into pay;
         return next pay;
     end loop;
+    close pay_row_cursor;
     return;
 end
 $$ language plpgsql;
 
-create or replace function all_project_payments(_project_id int)
+create or replace function all_project_payments(_project_id int, _num_per_page int, _idx_page int)
 returns setof payments_row as $$
 declare
     pay payments_row%rowtype;
+    pay_row_cursor refcursor;
+    i int;
 begin
-    insert into logs(project_id, content, log_level)
-        values (_project_id, 'Select project_s payments', 1);
-    for pay in
+    insert into logs(content, log_level)
+        values ('Select all payments', 1);
+    open pay_row_cursor for
         select *
         from payments
-        where project_id = _project_id
+        where project_id = _project_id;
+    move absolute (_idx_page - 1) * _num_per_page from pay_row_cursor;
+    i := 0;
     loop
+        if i >= _num_per_page then
+            exit;
+        end if;
+        i := i + 1;
+        fetch pay_row_cursor into pay;
         return next pay;
     end loop;
+    close pay_row_cursor;
     return;
 end
 $$ language plpgsql;
 
-create or replace function all_user_payments(_user_id int)
+create or replace function all_user_payments(_user_id int, _num_per_page int, _idx_page int)
 returns setof payments_row as $$
 declare
     pay payments_row%rowtype;
+    pay_row_cursor refcursor;
+    i int;
 begin
-    insert into logs(project_id, content, log_level)
-        values (_user_id, 'Select uesr_s payments', 1);
-    for pay in
+    insert into logs(content, log_level)
+        values ('Select all payments', 1);
+    open pay_row_cursor for
         select *
         from payments
-        where user_id = _user_id
+        where user_id = _user_id;
+    move absolute (_idx_page - 1) * _num_per_page from pay_row_cursor;
+    i := 0;
     loop
+        if i >= _num_per_page then
+            exit;
+        end if;
+        i := i + 1;
+        fetch pay_row_cursor into pay;
         return next pay;
     end loop;
+    close pay_row_cursor;
     return;
 end
 $$ language plpgsql;

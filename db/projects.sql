@@ -16,19 +16,29 @@ create type project_row as (
     end_time timestamp
 );
 
-create or replace function all_projects()
+create or replace function all_projects(_num_per_page int, _idx_page int)
 returns setof project_row as $$
 declare
     proj project_row%rowtype;
+    proj_row_cursor refcursor;
+    i int;
 begin
     insert into logs(content, log_level)
         values ('Select all projects', 1);
-    for proj in
+    open proj_row_cursor for 
         select *
-        from projects
+        from projects;
+    move absolute (_idx_page - 1) * _num_per_page from proj_row_cursor;
+    i := 0;
     loop
+        if i >= _num_per_page then
+            exit;
+        end if;
+        i := i + 1;
+        fetch proj_row_cursor into proj;
         return next proj;
     end loop;
+    close proj_row_cursor;
     return;
 end
 $$ language plpgsql;
