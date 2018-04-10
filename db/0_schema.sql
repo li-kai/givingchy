@@ -15,7 +15,7 @@ create table if not exists users (
     password varchar(255) not null,
     username citext not null,
     total_donation numeric(10, 2) not null default 0,
-    image citext,
+    image citext not null default '',
     is_admin boolean not null default false
 );
 
@@ -87,8 +87,3 @@ create table if not exists logs (
 --     SELECT id, email, is_admin FROM users
 --     WHERE email = $1
 --     AND password = crypt($2, password);
-
--- \copy categories FROM '/docker-entrypoint-initdb.d/categories.csv' CSV HEADER;
--- \copy users FROM '/docker-entrypoint-initdb.d/users.csv' CSV HEADER;
--- -- SOURCE: https://stackoverflow.com/a/3698777
--- SELECT setval(pg_get_serial_sequence('users', 'id'), coalesce(max(id),0) + 1, false) FROM users;

@@ -77,7 +77,7 @@ func NewDB() (*DB, error) {
 			return &DB{db}, nil
 		}
 
-		time.Sleep(time.Second)
+		time.Sleep(time.Second * time.Duration(i))
 	}
 	return nil, err
 }
