@@ -3,7 +3,7 @@
     <el-col :xs="24" :sm="18" v-loading="isLoading">
       <el-row :gutter="20">
         <el-col :xs="24" :sm="16" :lg="10">
-          <img src="https://via.placeholder.com/150x150" class="image">
+          <img :src="project.image" class="image">
         </el-col>
         <el-col :xs="24" :sm="8" :lg="14">
           <h1>{{project.title}}</h1>
@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import Comments from '../Comments.vue';
+import Comments from './Comments.vue';
 import axios from 'axios';
 import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
 import isFuture from 'date-fns/is_future';
