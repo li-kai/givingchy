@@ -15,6 +15,7 @@ declare
     comm comment_row%rowtype;
     comm_row_cursor refcursor;
     i int;
+    num_items int;
 begin
     insert into logs(content, log_level)
         values ('Select all comments', 1);
@@ -29,6 +30,7 @@ begin
         end if;
         i := i + 1;
         fetch comm_row_cursor into comm;
+        exit when not found;
         return next comm;
     end loop;
     close comm_row_cursor;
@@ -57,6 +59,7 @@ begin
         end if;
         i := i + 1;
         fetch comm_row_cursor into comm;
+        exit when not found;
         return next comm;
     end loop;
     close comm_row_cursor;
@@ -85,6 +88,7 @@ begin
         end if;
         i := i + 1;
         fetch comm_row_cursor into comm;
+        exit when not found;
         return next comm;
     end loop;
     close comm_row_cursor;

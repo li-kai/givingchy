@@ -17,7 +17,7 @@ select create_user('6@gmail.com', '12345', '3', '3');
 select create_user('7@gmail.com', '123', '1', '1');
 select create_user('8@gmail.com', '1234', '2', '2');
 select create_user('9@gmail.com', '12345', '3', '3');
-select * from all_users(8, 2);
+select * from all_users(20, 1);
 select * from get_user('1@gmail.com', '123');
 delete from users where email = '3@gmail.com';
 
@@ -61,12 +61,12 @@ select create_project('hello8', (
     select max(user_id) - 1
     from users
 ), 'Art', 'hello', '1', 100.0, '2018-08-20 14:52:49'::timestamp);
-select * from all_projects(2, 3);
+select * from all_projects(20, 1);
 select * from get_project((
     select max(project_id)
     from projects
 ));
-select * from search_project('llo', 3, 2);
+select * from search_project('llo', 20, 1);
 
 
 -- test for payments.sql
@@ -101,7 +101,7 @@ select delete_payment((
     select max(id) - 1
     from payments
 ));
-select * from all_payments(1, 2);
+select * from all_payments(20, 1);
 
 -- test for comments.sql
 
@@ -135,7 +135,7 @@ select delete_comment((
     select max(id) - 1
     from comments
 ));
-select * from all_comments(1, 2);
+select * from all_comments(20, 1);
 
 -- test for tags.sql
 select create_tag((
