@@ -53,7 +53,16 @@ func main() {
 
 func (env *Env) getProjects(w http.ResponseWriter, r *http.Request) {
 	numPerPage, pageIndex := getPaginationCursor(r)
-	projects, err := env.db.AllProjects(numPerPage, pageIndex)
+
+	var projects interface{}
+	var err error
+
+	searchTerm := r.URL.Query().Get("search")
+	if searchTerm == "" {
+		projects, err = env.db.AllProjects(numPerPage, pageIndex)
+	} else {
+		projects, err = env.db.SearchProjects(searchTerm, numPerPage, pageIndex)
+	}
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return

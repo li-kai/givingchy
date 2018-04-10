@@ -62,7 +62,7 @@ func (db *DB) AllProjects(numPerPage int, pageIdx int) ([]*Project, error) {
 // SearchProjects does a full text search on all projects in db
 func (db *DB) SearchProjects(searchTerm string, numPerPage int, pageIdx int) ([]*Project, error) {
 	return readProjects(db.Query(`
-		select * from search_project($1, $2, $3)
+		select * from search_projects($1, $2, $3)
 		`, searchTerm, numPerPage, pageIdx))
 }
 

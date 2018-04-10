@@ -14,6 +14,7 @@ import (
 // Datastore defines all methods over models
 type Datastore interface {
 	AllProjects(numPerPage, pageIdx int) ([]*Project, error)
+	SearchProjects(searchTerm string, numPerPage, pageIdx int) ([]*Project, error)
 	CreateProject(
 		title string,
 		userID int,

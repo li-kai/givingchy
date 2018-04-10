@@ -17,6 +17,28 @@ create type project_row as (
     end_time timestamp
 );
 
+create or replace view aggregated_projects AS
+select 
+    p.project_id,
+    p.title,
+    p.user_id,
+    p.category,
+    p.description,
+    p.verified,
+    array_remove(array_agg(t.tag_name), NULL) as tags,
+    p.image,
+    p.amount_raised,
+    p.amount_required,
+    p.start_time,
+    p.end_time,
+    to_tsvector(p.title) ||
+    to_tsvector(p.description) ||
+    to_tsvector(coalesce(string_agg(t.tag_name, ' '), ''))
+    as document
+from projects p
+left join tags t on p.project_id = t.project_id
+group by p.project_id;
+
 create or replace function all_projects(_num_per_page int, _idx_page int)
 returns setof project_row as $$
 declare
@@ -28,21 +50,19 @@ begin
         values ('Select all projects', 1);
     open proj_row_cursor for 
         select 
-            p.project_id,
-            p.title,
-            p.user_id,
-            p.category,
-            p.description,
-            p.verified,
-            array_remove(array_agg(t.tag_name), NULL) as tags,
-            p.image,
-            p.amount_raised,
-            p.amount_required,
-            p.start_time,
-            p.end_time
-        from projects p
-        left join tags t on p.project_id = t.project_id
-        group by p.project_id;
+            project_id,
+            title,
+            user_id,
+            category,
+            description,
+            verified,
+            tags,
+            image,
+            amount_raised,
+            amount_required,
+            start_time,
+            end_time
+        from aggregated_projects;
     move absolute (_idx_page - 1) * _num_per_page from proj_row_cursor;
     i := 0;
     loop
@@ -69,9 +89,8 @@ begin
     insert into logs(content, log_level)
         values ('Search projects', 1);
     open proj_row_cursor for 
-        select *
-        from projects
-        where title like '%' || _keyword || '%';
+        select * from aggregated_projects p
+        where p.document @@ to_tsquery(_keyword);
     move absolute (_idx_page - 1) * _num_per_page from proj_row_cursor;
     i := 0;
     loop
@@ -112,23 +131,21 @@ begin
     insert into logs(project_id, content, log_level)
         values (_project_id, 'Select project', 1);
     select 
-            p.project_id,
-            p.title,
-            p.user_id,
-            p.category,
-            p.description,
-            p.verified,
-            array_remove(array_agg(t.tag_name), NULL) as tags,
-            p.image,
-            p.amount_raised,
-            p.amount_required,
-            p.start_time,
-            p.end_time
-        from projects p
-        into proj_row
-        left join tags t on p.project_id = t.project_id
-        group by p.project_id
-        having p.project_id = _project_id;
+        project_id,
+        title,
+        user_id,
+        category,
+        description,
+        verified,
+        tags,
+        image,
+        amount_raised,
+        amount_required,
+        start_time,
+        end_time
+    into proj_row
+    from aggregated_projects
+    where project_id = _project_id;
     return proj_row;
 end
 $$ language plpgsql;
