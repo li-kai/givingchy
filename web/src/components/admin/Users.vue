@@ -11,6 +11,10 @@
       width="50">
     </el-table-column>
     <el-table-column
+      prop="username"
+      label="Username">
+    </el-table-column>
+    <el-table-column
       prop="email"
       label="Email">
     </el-table-column>
