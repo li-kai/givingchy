@@ -67,6 +67,7 @@ export default {
         description: '',
         endTime: '',
         amountRequired: 1,
+        image: 'https://picsum.photos/300/150/?random' + Math.random(),
         userId: 1,
         category: '',
       },

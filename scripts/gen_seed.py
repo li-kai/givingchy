@@ -2,6 +2,7 @@ import os
 import csv
 import string
 import random
+from hashlib import md5
 from faker import Faker
 
 """
@@ -17,10 +18,10 @@ generator = Faker()
 MULTIPLIER = 100
 NO_OF_USERS = 10 * MULTIPLIER
 NO_OF_PROJECTS = 5 * MULTIPLIER
-NO_OF_TAGS = 1 * MULTIPLIER
 NO_OF_PAYMENTS = 100 * MULTIPLIER
 NO_OF_COMMENTS = 100 * MULTIPLIER
-MAX_PRICE = 5000
+MAX_TAGS_PER_PROJ = 5
+MAX_PRICE = 1000
 MAX_REQUIRED = 10000
 CATEGORIES = [
    "Art",
@@ -67,15 +68,16 @@ with open(user_csv_path, 'w') as user_csv:
        "image",
        "is_admin",
     ])
-   user_writer.writerow(["1", "admin", "password", "admin", 0, '""', "t"])
+   user_writer.writerow(["1", "admin", "password", "admin", 0, "https://www.gravatar.com/avatar/", "t"])
    for i in range(2, NO_OF_USERS + 1):
+       email = generator.ascii_email()
        user_writer.writerow([
            i,
-           base_encode(i) + generator.email(),
+           base_encode(i) + email,
            generator.color_name(),
            generator.user_name(),
            0,
-           '""',
+           "https://www.gravatar.com/avatar/" + md5(email.encode('utf-8')).hexdigest(),
            "f"
        ])
 print("write_user_csv end")
@@ -115,7 +117,7 @@ with open(project_csv_path, 'w') as project_csv:
            random.choice(CATEGORIES),
            generator.catch_phrase(),
            "t",
-           "https://picsum.photos/300/150/?random" + str(i),
+           "https://picsum.photos/320/200/?random" + str(i),
            "{0:.2f}".format(random.uniform(0, MAX_REQUIRED)),
            "{0:.2f}".format(random.uniform(1, MAX_REQUIRED)),
            start_date,
@@ -129,11 +131,15 @@ with open(tag_csv_path, 'w') as tag_csv:
    tag_writer = csv.writer(tag_csv)
    tag_writer.writerow(
        ["project_id", "tag_name"])
-   for i in range(1, NO_OF_TAGS + 1):
-       tag_writer.writerow([
-           random.randint(1, NO_OF_PROJECTS),
-           generator.country(),
-       ])
+   for i in range(1, NO_OF_PROJECTS + 1):
+       countries = set()
+       for j in range(random.randint(0, MAX_TAGS_PER_PROJ)):
+           countries.add(generator.country())
+       for country in countries:
+            tag_writer.writerow([
+                i,
+                country,
+            ])
 print("write_tag_csv end")
 
 print("write_payment_csv")

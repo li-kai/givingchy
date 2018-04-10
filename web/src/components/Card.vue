@@ -1,18 +1,24 @@
 <template>
   <el-card class="card">
-    <img alt="placeholder" :src="project.image" class="image">
-    <div>
-      <router-link :to="projectPath">
-        <h3>{{project.title}}</h3>
-      </router-link>
-      <h4>{{project.description}}</h4>
-      <span>{{timeLeft}}</span>
-    </div>
-    <el-row class="tags">
-      <el-col :span="1" v-for="(tag, index) in project.tags" :key="index">
-        <el-tag type="info">{{tag}}</el-tag>
-      </el-col>
-    </el-row>
+    <router-link class="card-link" :to="projectPath">
+      <img alt="placeholder" :src="project.image" class="image">
+      <div class="card-content">
+          <h3>{{project.title}}</h3>
+        <h4 class="card-desc">{{project.description}}</h4>
+        <span class="card-time">{{timeLeft}}</span>
+      </div>
+      <div class="tags">
+        <el-tag 
+          class="tags-tag" 
+          type="info" 
+          size="small" 
+          color="#FFF"
+          v-for="(tag, index) in project.tags" 
+          :key="index">
+          {{tag}}
+        </el-tag>
+      </div>
+    </router-link>
   </el-card>
 </template>
 
@@ -44,35 +50,38 @@ export default {
 
 <style scoped>
 .card {
-  display: flex;
-  flex-direction: column;
   height: 25rem;
   margin: 0 0 1.5rem;
+  padding: 0;
 }
 
-@keyframes placeHolderShimmer{
-    0%{
-        background-position: 100% 0
-    }
-    100%{
-        background-position: -100% 0
-    }
+.card-link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
 }
 
-.image {
-  max-height: 12.5rem;
-  height: 150px;
-  width: 100%;
-  object-fit: cover;
-  line-height: 150px;
-  text-align: center;
-  animation: 1.25s linear placeHolderShimmer infinite;
-  background: #f6f7f8;
-  background: linear-gradient(80deg, #eeeeee 8%, #dddddd 18%, #eeeeee 33%);
-  background-size: 250% 100%;
+.card-content {
+  flex: 1;
+  padding: 0 1rem;
+}
+
+.card-desc {
+  margin: 0.25rem 0;
+}
+
+.card-time {
+  color: #606266;
 }
 
 .tags {
-  margin: 0.5rem 0.5rem 0 0;
+  align-self: bottom;
+  margin: 1rem;
+}
+
+.tags-tag {
+  margin: 0.25rem 0.25rem 0 0;
 }
 </style>

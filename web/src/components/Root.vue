@@ -15,7 +15,11 @@
     </el-col>
     <el-col class="categories" :xs="24">
       <el-tag 
-        type="info" class="categories-tag"
+        class="categories-tag"
+        disable-transitions="true"
+        type="info" 
+        size="medium" 
+        color="#FFF"
         v-for="(cate, index) in categories" 
         :key="index" 
         @click.native="querySearch(cate.name)" 
@@ -44,7 +48,7 @@
 
 <script>
 import Card from './Card.vue';
-import { projects } from '../fixtures';
+import { projects, categories } from '../fixtures';
 import axios from 'axios';
 
 const PAGE_NUM = 1;
@@ -64,11 +68,11 @@ export default {
   data() {
     return {
       projects,
+      categories,
       pageNum: PAGE_NUM,
       pageSize: PAGE_SIZE,
       pageCount: PAGE_COUNT,
       searchTerm: '',
-      categories: [],
     };
   },
   created() {
