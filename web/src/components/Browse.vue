@@ -1,21 +1,21 @@
 <template>
   <div>
-  <h1>Crowdfunding the world</h1>
-	<el-row :gutter="20">
-    <el-col :xs="24" :sm="12" :md="8" :lg="6" v-for="proj in projects" :key="proj.id">
-      <card :project="proj"></card>
-    </el-col>
-	</el-row>
-  <el-row type="flex" justify="space-around">
-    <el-pagination
-      layout="prev, pager, next"
-      :page-size="pageSize"
-      :page-count="pageCount"
-      :current-page.sync="pageNum"
-      @current-change="handleCurrentChange"
-      >
-    </el-pagination>
-  </el-row>
+    <h1>Crowdfunding the world</h1>
+        <el-row :gutter="20">
+        <el-col :xs="24" :sm="12" :md="8" :lg="6" v-for="proj in projects" :key="proj.id">
+        <card :project="proj"></card>
+        </el-col>
+        </el-row>
+    <el-row type="flex" justify="space-around">
+        <el-pagination
+        layout="prev, pager, next"
+        :page-size="pageSize"
+        :page-count="pageCount"
+        :current-page.sync="pageNum"
+        @current-change="handleCurrentChange"
+        >
+        </el-pagination>
+    </el-row>
   </div>
 </template>
 

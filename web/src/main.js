@@ -138,10 +138,10 @@ Vue.config.productionTip = false;
   // Cascader,
   // ColorPicker,
   // Transfer,
-  Container,
-  Header,
-  Aside,
-  Main,
+  // Container,
+  // Header,
+  // Aside,
+  // Main,
   // Footer,
 ].forEach((comp) => Vue.use(comp));
 
