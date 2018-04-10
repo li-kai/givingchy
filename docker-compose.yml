@@ -30,7 +30,7 @@ services:
       - api
     restart: on-failure
   postgres:
-    image: postgres:alpine
+    image: postgres:alpine@sha256:89c84fcccc147d403916f4d9964bc4d83297ea7c782d79b05dad5b6c172a7dce
     env_file:
       - .env
     volumes:
@@ -39,7 +39,7 @@ services:
     expose:
       - "5432"
   proxy:
-    image: nginx:alpine
+    image: nginx:alpine@sha256:e0f3f5ebde753fa44b5fcdc771fc89f117ee8b2bbcece1c1bdf35f2de4da4e0b
     ports:
       - "80:80"
       - "443:443"
