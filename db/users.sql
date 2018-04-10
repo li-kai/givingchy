@@ -30,6 +30,7 @@ begin
         end if;
         i := i + 1;
         fetch usr_row_cursor into usr;
+        exit when not found;
         return next usr;
     end loop;
     close usr_row_cursor;

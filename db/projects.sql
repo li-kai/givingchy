@@ -36,6 +36,7 @@ begin
         end if;
         i := i + 1;
         fetch proj_row_cursor into proj;
+        exit when not found;
         return next proj;
     end loop;
     close proj_row_cursor;
@@ -64,6 +65,7 @@ begin
         end if;
         i := i + 1;
         fetch proj_row_cursor into proj;
+        exit when not found;
         return next proj;
     end loop;
     close proj_row_cursor;

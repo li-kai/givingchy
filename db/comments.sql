@@ -29,6 +29,7 @@ begin
         end if;
         i := i + 1;
         fetch comm_row_cursor into comm;
+        exit when not found;
         return next comm;
     end loop;
     close comm_row_cursor;
@@ -57,6 +58,7 @@ begin
         end if;
         i := i + 1;
         fetch comm_row_cursor into comm;
+        exit when not found;
         return next comm;
     end loop;
     close comm_row_cursor;
@@ -85,6 +87,7 @@ begin
         end if;
         i := i + 1;
         fetch comm_row_cursor into comm;
+        exit when not found;
         return next comm;
     end loop;
     close comm_row_cursor;

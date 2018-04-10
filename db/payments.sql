@@ -30,6 +30,7 @@ begin
         end if;
         i := i + 1;
         fetch pay_row_cursor into pay;
+        exit when not found;
         return next pay;
     end loop;
     close pay_row_cursor;
@@ -58,6 +59,7 @@ begin
         end if;
         i := i + 1;
         fetch pay_row_cursor into pay;
+        exit when not found;
         return next pay;
     end loop;
     close pay_row_cursor;
@@ -86,6 +88,7 @@ begin
         end if;
         i := i + 1;
         fetch pay_row_cursor into pay;
+        exit when not found;
         return next pay;
     end loop;
     close pay_row_cursor;
