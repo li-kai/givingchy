@@ -6,8 +6,19 @@
           <img :src="project.image" class="image">
         </el-col>
         <el-col :xs="24" :sm="8" :lg="14">
-          <h1>{{project.title}}</h1>
-          <h2>{{project.description}}</h2>
+          <h1 class="proj-title">{{project.title}}</h1>
+          <h2 class="proj-desc">{{project.description}}</h2>
+          <div class="tags">
+            <el-tag 
+              class="tags-tag" 
+              type="info" 
+              size="small" 
+              color="#FFF"
+              v-for="(tag, index) in project.tags" 
+              :key="index">
+              {{tag}}
+            </el-tag>
+          </div>
           <div class="amount-raised">${{project.amountRaised}}</div>
           <div class="amount-required">raised of ${{project.amountRequired}} goal</div>
           <el-progress
@@ -15,11 +26,6 @@
             :status="fundingStatus"
             class="amount-percentage">
           </el-progress>
-          <el-row class="tags">
-            <el-col :span="1" v-for="(tag, index) in project.tags" :key="index">
-              <el-tag type="info">{{tag}}</el-tag>
-            </el-col>
-          </el-row>
         </el-col>
       </el-row>
       <el-row>
@@ -119,8 +125,15 @@ export default {
 
 <style scoped>
 .image {
-  width: 100%;
-  object-fit: cover;
+  height: 100%;
+  max-height: 100%;
+}
+.proj-title {
+  margin: 0.2rem 0;
+}
+.proj-desc {
+  margin: 0.1rem 0 0.2rem;
+  color: #606266;
 }
 .amount-raised {
   font-size: 1.35em;
@@ -137,7 +150,10 @@ export default {
   max-width: 36rem;
 }
 .tags {
-  margin: 0.5rem 0.5rem 0 0;
+  margin: 0 0 1.25rem -0.05rem;
+}
+.tags-tag {
+  margin: 0.25rem 0.25rem 0 0;
 }
 .keyline {
   margin-top: 2rem;

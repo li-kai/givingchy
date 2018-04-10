@@ -68,4 +68,31 @@ h2 {
 .el-menu--horizontal > .el-menu-item.auth {
   float: right;
 }
+
+.el-card > .el-card__body {
+  padding: 0;
+  height: 100%;
+}
+
+@keyframes placeHolderShimmer{
+    0%{
+        background-position: 100% 0
+    }
+    100%{
+        background-position: -100% 0
+    }
+}
+
+.image {
+  max-height: 12.5rem;
+  height: 165px;
+  width: 100%;
+  object-fit: cover;
+  line-height: 165px;
+  text-align: center;
+  animation: 1.25s linear placeHolderShimmer infinite;
+  background: #f6f7f8;
+  background: linear-gradient(80deg, #eeeeee 8%, #dddddd 18%, #eeeeee 33%);
+  background-size: 250% 100%;
+}
 </style>
