@@ -11,7 +11,7 @@
     "axios": "0.18.0",
     "date-fns": "1.29.0",
     "element-ui": "2.3.3",
-    "vue": "2.5.13",
+    "vue": "2.5.16",
     "vue-router": "3.0.1"
   },
   "devDependencies": {
@@ -19,7 +19,7 @@
     "@vue/cli-plugin-eslint": "3.0.0-beta.6",
     "@vue/cli-service": "3.0.0-beta.6",
     "babel-plugin-component": "1.1.0",
-    "vue-template-compiler": "2.5.13"
+    "vue-template-compiler": "2.5.16"
   },
   "babel": {
     "presets": [
