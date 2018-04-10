@@ -33,6 +33,7 @@ select
     p.end_time,
     to_tsvector(p.title) ||
     to_tsvector(p.description) ||
+    to_tsvector(p.category) ||
     to_tsvector(coalesce(string_agg(t.tag_name, ' '), ''))
     as document
 from projects p
