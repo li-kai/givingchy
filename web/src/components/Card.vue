@@ -8,9 +8,9 @@
       <h4>{{project.description}}</h4>
       <span>{{timeLeft}}</span>
     </div>
-    <el-row class="keywords">
-      <el-col :span="1" v-for="(keyword, index) in project.keywords" :key="index">
-        <el-tag type="info">{{keyword}}</el-tag>
+    <el-row class="tags">
+      <el-col :span="1" v-for="(tag, index) in project.tags" :key="index">
+        <el-tag type="info">{{tag}}</el-tag>
       </el-col>
     </el-row>
   </el-card>
@@ -52,7 +52,7 @@ export default {
   height: 25rem;
   margin: 0 0 1.5rem;
 }
-.keywords {
+.tags {
   margin: 0.5rem 0.5rem 0 0;
 }
 </style>

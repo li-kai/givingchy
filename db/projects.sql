@@ -9,6 +9,7 @@ create type project_row as (
     category citext,
     description text,
     verified boolean,
+    tags citext[],
     image citext,
     amount_raised numeric,
     amount_required numeric,
@@ -26,8 +27,22 @@ begin
     insert into logs(content, log_level)
         values ('Select all projects', 1);
     open proj_row_cursor for 
-        select *
-        from projects;
+        select 
+            p.project_id,
+            p.title,
+            p.user_id,
+            p.category,
+            p.description,
+            p.verified,
+            array_remove(array_agg(t.tag_name), NULL) as tags,
+            p.image,
+            p.amount_raised,
+            p.amount_required,
+            p.start_time,
+            p.end_time
+        from projects p
+        left join tags t on p.project_id = t.project_id
+        group by p.project_id;
     move absolute (_idx_page - 1) * _num_per_page from proj_row_cursor;
     i := 0;
     loop
@@ -44,7 +59,7 @@ begin
 end
 $$ language plpgsql;
 
-create or replace function search_project(_keyword citext, _num_per_page int, _idx_page int)
+create or replace function search_projects(_keyword citext, _num_per_page int, _idx_page int)
 returns setof project_row as $$
 declare
     proj project_row%rowtype;
@@ -96,10 +111,24 @@ declare
 begin
     insert into logs(project_id, content, log_level)
         values (_project_id, 'Select project', 1);
-    select *
-        from projects
+    select 
+            p.project_id,
+            p.title,
+            p.user_id,
+            p.category,
+            p.description,
+            p.verified,
+            array_remove(array_agg(t.tag_name), NULL) as tags,
+            p.image,
+            p.amount_raised,
+            p.amount_required,
+            p.start_time,
+            p.end_time
+        from projects p
         into proj_row
-        where project_id = _project_id;
+        left join tags t on p.project_id = t.project_id
+        group by p.project_id
+        having p.project_id = _project_id;
     return proj_row;
 end
 $$ language plpgsql;

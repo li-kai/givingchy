@@ -1,7 +1,10 @@
 package models
 
 import (
+	"database/sql"
 	"time"
+
+	"github.com/lib/pq"
 )
 
 // Project represents one project
@@ -12,6 +15,7 @@ type Project struct {
 	Category       string    `json:"category"`
 	Description    string    `json:"description"`
 	Verified       bool      `json:"verified"`
+	Tags           []string  `json:"tags"`
 	Image          string    `json:"image"`
 	AmountRaised   float64   `json:"amountRaised"`
 	AmountRequired float64   `json:"amountRequired"`
@@ -19,16 +23,11 @@ type Project struct {
 	EndTime        time.Time `json:"endTime"`
 }
 
-// AllProjects gets all projects in db
-func (db *DB) AllProjects(numPerPage int, pageIdx int) ([]*Project, error) {
-	rows, err := db.Query(`
-		select * from all_projects($1, $2)
-		`, numPerPage, pageIdx)
+func readProjects(rows *sql.Rows, err error) ([]*Project, error) {
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-
 	projects := []*Project{}
 	for rows.Next() {
 		var project Project
@@ -39,6 +38,7 @@ func (db *DB) AllProjects(numPerPage int, pageIdx int) ([]*Project, error) {
 			&project.Category,
 			&project.Description,
 			&project.Verified,
+			pq.Array(&project.Tags),
 			&project.Image,
 			&project.AmountRaised,
 			&project.AmountRequired,
@@ -49,8 +49,21 @@ func (db *DB) AllProjects(numPerPage int, pageIdx int) ([]*Project, error) {
 		}
 		projects = append(projects, &project)
 	}
-
 	return projects, nil
+}
+
+// AllProjects gets all projects in db
+func (db *DB) AllProjects(numPerPage int, pageIdx int) ([]*Project, error) {
+	return readProjects(db.Query(`
+		select * from all_projects($1, $2)
+		`, numPerPage, pageIdx))
+}
+
+// SearchProjects does a full text search on all projects in db
+func (db *DB) SearchProjects(searchTerm string, numPerPage int, pageIdx int) ([]*Project, error) {
+	return readProjects(db.Query(`
+		select * from search_project($1, $2, $3)
+		`, searchTerm, numPerPage, pageIdx))
 }
 
 // CreateProject creates a funding project
@@ -84,6 +97,7 @@ func (db *DB) GetProject(id string) (*Project, error) {
 		&project.Category,
 		&project.Description,
 		&project.Verified,
+		pq.Array(&project.Tags),
 		&project.Image,
 		&project.AmountRaised,
 		&project.AmountRequired,
