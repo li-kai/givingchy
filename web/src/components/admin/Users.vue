@@ -3,7 +3,7 @@
   <h1>Users</h1>
   <el-table
     :data="users"
-    :row-key="users.id"
+    :row-key="users.user_id"
     style="width: 100%">
     <el-table-column
       prop="id"

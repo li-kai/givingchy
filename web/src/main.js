@@ -80,7 +80,7 @@ locale.use(lang);
 Vue.config.productionTip = false;
 
 [
-  // Pagination,
+  Pagination,
   // Dialog,
   // Autocomplete,
   // Dropdown,

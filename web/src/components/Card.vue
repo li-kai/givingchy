@@ -1,6 +1,6 @@
 <template>
   <el-card class="card">
-    <img alt="placeholder" src="https://via.placeholder.com/300x150" class="image">
+    <img alt="placeholder" :src="project.image" class="image">
     <div>
       <router-link :to="projectPath">
         <h3>{{project.title}}</h3>
