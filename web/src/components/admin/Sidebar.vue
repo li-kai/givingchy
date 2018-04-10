@@ -1,7 +1,7 @@
 <template>
   <el-row :gutter="20">
     <el-col :span="4">
-    <el-aside width="100%" class="aside">
+    <aside width="100%" class="aside">
       <el-menu
         :router="true"
         :default-active="$route.path"
@@ -23,7 +23,7 @@
           <span>Comments</span>
         </el-menu-item>
       </el-menu>
-    </el-aside>
+    </aside>
     </el-col>
     <el-col :span="20">
       <router-view></router-view>
