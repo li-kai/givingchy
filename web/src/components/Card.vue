@@ -43,15 +43,35 @@ export default {
 </script>
 
 <style scoped>
-.image {
-  width: 100%;
-  max-height: 12.5rem;
-  object-fit: cover;
-}
 .card {
+  display: flex;
+  flex-direction: column;
   height: 25rem;
   margin: 0 0 1.5rem;
 }
+
+@keyframes placeHolderShimmer{
+    0%{
+        background-position: 100% 0
+    }
+    100%{
+        background-position: -100% 0
+    }
+}
+
+.image {
+  max-height: 12.5rem;
+  height: 150px;
+  width: 100%;
+  object-fit: cover;
+  line-height: 150px;
+  text-align: center;
+  animation: 1.25s linear placeHolderShimmer infinite;
+  background: #f6f7f8;
+  background: linear-gradient(80deg, #eeeeee 8%, #dddddd 18%, #eeeeee 33%);
+  background-size: 250% 100%;
+}
+
 .tags {
   margin: 0.5rem 0.5rem 0 0;
 }
