@@ -5,7 +5,7 @@
       ref="form"
       :model="project"
       :rules="rules"
-      label-position="right" label-width="8rem"
+      label-position="right" label-width="10rem"
     >
       <el-form-item label="Title" prop="title">
         <el-input type="text"
