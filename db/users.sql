@@ -21,7 +21,8 @@ begin
         values ('Select all users', 1);
     open usr_row_cursor for 
         select user_id, email, username, total_donation, image, is_admin
-        from users;
+        from users
+        order by user_id;
     move absolute (_idx_page - 1) * _num_per_page from usr_row_cursor;
     i := 0;
     loop

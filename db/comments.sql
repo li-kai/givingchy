@@ -20,7 +20,8 @@ begin
         values ('Select all comments', 1);
     open comm_row_cursor for
         select *
-        from comments;
+        from comments
+        order by id;
     move absolute (_idx_page - 1) * _num_per_page from comm_row_cursor;
     i := 0;
     loop
