@@ -107,6 +107,9 @@ typings/
 
 postgres-data/
 
-### General ###
+### Code editors ###
+.vscode
+
+### Security ###
 *.key
 *.crt
