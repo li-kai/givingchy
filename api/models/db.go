@@ -13,7 +13,7 @@ import (
 
 // Datastore defines all methods over models
 type Datastore interface {
-	AllProjects() ([]*Project, error)
+	AllProjects(numPerPage, pageIdx int) ([]*Project, error)
 	CreateProject(
 		title string,
 		userID int,
@@ -25,23 +25,27 @@ type Datastore interface {
 	) (int, error)
 	GetProject(id string) (*Project, error)
 
-	AllUsers() ([]*User, error)
+	AllUsers(numPerPage, pageIdx int) ([]*User, error)
 	GetUser(email string, password string) (*User, error)
 	CreateUser(email string, password string, username string, image string) (int, error)
 
 	AllCategories() ([]*Category, error)
 	CreateCategory(name string) error
 
-	AllPayments() ([]*Payment, error)
-	AllProjectPayments(projectID int) ([]*Payment, error)
-	AllUserPayments(userID int) ([]*Payment, error)
+	AllTags() ([]*Tag, error)
+	CreateTag(projectID int, tagName string) error
+	AllProjectTags(projectID int) ([]*Tag, error)
+
+	AllPayments(numPerPage, pageIdx int) ([]*Payment, error)
+	AllProjectPayments(projectID int, numPerPage, pageIdx int) ([]*Payment, error)
+	AllUserPayments(userID int, numPerPage, pageIdx int) ([]*Payment, error)
 	CreatePayment(userID int, projectID int, amount float64) (int, error)
 	UpdatePayment(paymentID int, amount float64) error
 	DeletePayment(paymentID int) error
 
-	AllComments() ([]*Comment, error)
-	AllProjectComments(projectID int) ([]*Comment, error)
-	AllUserComments(userID int) ([]*Comment, error)
+	AllComments(numPerPage, pageIdx int) ([]*Comment, error)
+	AllProjectComments(projectID, numPerPage, pageIdx int) ([]*Comment, error)
+	AllUserComments(userID, numPerPage, pageIdx int) ([]*Comment, error)
 	CreateComment(userID int, projectID int, content string) (int, error)
 	UpdateComment(commentID int, content string) error
 	DeleteComment(commentID int) error
