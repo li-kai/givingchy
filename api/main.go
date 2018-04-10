@@ -52,7 +52,8 @@ func main() {
 }
 
 func (env *Env) getProjects(w http.ResponseWriter, r *http.Request) {
-	projects, err := env.db.AllProjects()
+	numPerPage, pageIndex := getPaginationCursor(r)
+	projects, err := env.db.AllProjects(numPerPage, pageIndex)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -82,7 +83,8 @@ func (env *Env) getProjectComments(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusNotFound, "No such project id")
 		return
 	}
-	comments, err := env.db.AllProjectComments(projectID)
+	numPerPage, pageIndex := getPaginationCursor(r)
+	comments, err := env.db.AllProjectComments(projectID, numPerPage, pageIndex)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -127,7 +129,8 @@ func (env *Env) createProject(w http.ResponseWriter, r *http.Request) {
 }
 
 func (env *Env) getUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := env.db.AllUsers()
+	numPerPage, pageIndex := getPaginationCursor(r)
+	users, err := env.db.AllUsers(numPerPage, pageIndex)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -160,8 +163,19 @@ func (env *Env) createUser(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusCreated, userID)
 }
 
+func (env *Env) getCategories(w http.ResponseWriter, r *http.Request) {
+	categories, err := env.db.AllCategories()
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, categories)
+}
+
 func (env *Env) getPayments(w http.ResponseWriter, r *http.Request) {
-	users, err := env.db.AllPayments()
+	numPerPage, pageIndex := getPaginationCursor(r)
+	users, err := env.db.AllPayments(numPerPage, pageIndex)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -197,16 +211,6 @@ func (env *Env) createPayment(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusCreated, paymentID)
 }
 
-func (env *Env) getCategories(w http.ResponseWriter, r *http.Request) {
-	categories, err := env.db.AllCategories()
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	respondWithJSON(w, http.StatusOK, categories)
-}
-
 func (env *Env) createCategory(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var category models.Category
@@ -224,7 +228,8 @@ func (env *Env) createCategory(w http.ResponseWriter, r *http.Request) {
 }
 
 func (env *Env) getComments(w http.ResponseWriter, r *http.Request) {
-	comments, err := env.db.AllComments()
+	numPerPage, pageIndex := getPaginationCursor(r)
+	comments, err := env.db.AllComments(numPerPage, pageIndex)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -258,6 +263,20 @@ func (env *Env) createComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respondWithJSON(w, http.StatusCreated, commentID)
+}
+
+func getPaginationCursor(r *http.Request) (numPerPage, pageIndex int) {
+	// look at URL query params for page number and limit
+	queryParams := r.URL.Query()
+	pageNum, err := strconv.Atoi(queryParams.Get("page"))
+	if err != nil {
+		pageNum = 1
+	}
+	limit, err := strconv.Atoi(queryParams.Get("limit"))
+	if err != nil {
+		limit = 10
+	}
+	return limit, pageNum
 }
 
 func respondWithError(w http.ResponseWriter, code int, message string) {
