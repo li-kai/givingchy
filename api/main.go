@@ -160,7 +160,7 @@ func userAuth(w http.ResponseWriter, user *models.User) {
 	// Create JWT token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		ExpiresAt: 15000,
-		Issuer:    "10million",
+		Issuer:    "Givingchy",
 	})
 	// Sign and get the complete encoded token as a string using the secret
 	tokenString, err := token.SignedString(secretKey())
