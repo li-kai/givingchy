@@ -1,4 +1,4 @@
-# 10million
+# Givingchy
 
 ## Setup
 
@@ -31,6 +31,18 @@ To work on:
 ```sh
 docker-compose exec postgres sh
 psql testdb -U postgres
+```
+
+## Deployment
+
+Get a digitalocean api key
+```sh
+docker-machine create --driver digitalocean --digitalocean-access-token <key> demo
+docker-machine env demo
+eval $(docker-machine env demo)
+docker-machine ssh demo
+# repeat set up steps
+docker-compose up -d
 ```
 
 ## Testing
