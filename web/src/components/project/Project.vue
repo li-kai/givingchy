@@ -9,12 +9,12 @@
           <h1 class="proj-title">{{project.title}}</h1>
           <h2 class="proj-desc">{{project.description}}</h2>
           <div class="tags">
-            <el-tag 
-              class="tags-tag" 
-              type="info" 
-              size="small" 
+            <el-tag
+              class="tags-tag"
+              type="info"
+              size="small"
               color="#FFF"
-              v-for="(tag, index) in project.tags" 
+              v-for="(tag, index) in project.tags"
               :key="index">
               {{tag}}
             </el-tag>
@@ -104,7 +104,7 @@ export default {
     submit() {
       this.project.amountRaised += this.fundingAmount;
       axios.post("/api/payments", {
-        userId: 1,
+        userId: this.$store.getters.user.userId,
         projectId: this.project.id,
         amount: this.fundingAmount,
       }).then(() => {

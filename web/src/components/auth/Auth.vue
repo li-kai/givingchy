@@ -8,6 +8,7 @@
         <el-form
           ref="form"
           :model="credentials" :rules="rules"
+          @submit.native.prevent="submit"
           label-position="right" label-width="6rem"
         >
           <el-form-item label="Email" prop="email">
@@ -29,7 +30,7 @@
             </el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submit()">
+            <el-button native-type="submit" type="primary">
               {{ isLogin ? 'Log in' : 'Sign up'}}
             </el-button>
           </el-form-item>
@@ -105,14 +106,17 @@ export default {
   methods: {
     submit() {
       const endPoint = this.isLogin ? '/api/auth' : 'api/user';
-      const body = this.isLogin ? {
-        email: this.credentials.email,
-        password: this.credentials.password
-      } : this.credentials;
+      const body = this.isLogin
+        ? {
+            email: this.credentials.email,
+            password: this.credentials.password,
+          }
+        : this.credentials;
       axios
         .post(endPoint, body)
         .then((res) => {
           this.$store.dispatch('loginUser', res.data);
+          this.$router.push(this.$route.query.redirect || '/');
         })
         .catch((err) => {
           console.error(err);

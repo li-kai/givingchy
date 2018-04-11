@@ -5,6 +5,7 @@
       ref="form"
       :model="project"
       :rules="rules"
+      @submit.native.prevent="submit"
       label-position="right" label-width="10rem"
     >
       <el-form-item label="Title" prop="title">
@@ -46,7 +47,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submit()">
+        <el-button native-type="submit" type="primary">
           Submit
         </el-button>
       </el-form-item>
@@ -68,7 +69,6 @@ export default {
         endTime: '',
         amountRequired: 1,
         image: 'https://picsum.photos/300/150/?random' + Math.random(),
-        userId: 1,
         category: '',
       },
       categories,
@@ -145,7 +145,8 @@ export default {
   },
   methods: {
     submit() {
-      axios.post('/api/project', this.project).then((res) => {
+      const project = { userId: this.$store.getters.user.userId, ...this.project };
+      axios.post('/api/project', project).then((res) => {
         this.$router.push({ path: `/projects/${res.data}` });
       })
       .catch((err) => console.error(err));
