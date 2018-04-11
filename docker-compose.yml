@@ -39,7 +39,7 @@ services:
     expose:
       - "5432"
   proxy:
-    image: nginx:alpine@sha256:e0f3f5ebde753fa44b5fcdc771fc89f117ee8b2bbcece1c1bdf35f2de4da4e0b
+    image: nginx:alpine@sha256:e5a3c072905c9a30fb29f81b5eb80644f360cfc2b3c47fe0153da614d1dab87a
     ports:
       - "80:80"
       - "443:443"
