@@ -36,15 +36,16 @@
           <p>
             {{ timeLeft }}
           </p>
-          <el-slider :max="1000" v-model="fundingAmount" show-input class="amount-slider"></el-slider>
-          <el-button type="primary" @click="submit()" :disabled="fundingAmount <= 0">
+          <el-slider :disabled="!isLoggedIn" :max="1000" v-model="fundingAmount" show-input class="amount-slider">
+          </el-slider>
+          <el-button type="primary" @click="submit()" :disabled="!isLoggedIn || fundingAmount <= 0">
             Back project
           </el-button>
         </el-col>
       </el-row>
       <el-row v-if="!isLoading" class="keyline">
         <el-col>
-          <comments :project-id="project.id"/>
+          <comments :project-id="project.id" :disabled="!isLoggedIn"/>
         </el-col>
       </el-row>
     </el-col>
@@ -52,10 +53,11 @@
 </template>
 
 <script>
-import Comments from './Comments.vue';
+import { mapGetters } from 'vuex';
 import axios from 'axios';
 import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
 import isFuture from 'date-fns/is_future';
+import Comments from './Comments.vue';
 import { projects } from '../../fixtures';
 
 export default {
@@ -71,6 +73,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(['isLoggedIn', 'user']),
     timeLeft() {
       const { endTime } = this.project;
       const ago = distanceInWordsToNow(this.project.endTime);
@@ -102,12 +105,12 @@ export default {
   },
   methods: {
     submit() {
-      this.project.amountRaised += this.fundingAmount;
       axios.post("/api/payments", {
-        userId: this.$store.getters.user.userId,
+        userId: this.user.userId,
         projectId: this.project.id,
         amount: this.fundingAmount,
       }).then(() => {
+        this.project.amountRaised += this.fundingAmount;
         this.fundingAmount = 0;
         // reset amount
         this.$notify({
@@ -116,7 +119,11 @@ export default {
           type: 'success',
         });
       }).catch((err) => {
-        console.error(err);
+        this.$notify({
+          title: 'Error!',
+          message: err.response.data.error,
+          type: 'error',
+        });
       });
     },
   },

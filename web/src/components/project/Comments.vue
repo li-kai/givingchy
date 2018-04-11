@@ -10,7 +10,7 @@
     <p v-else>
       No comments yet. Get the ball rolling!
     </p>
-    <el-form ref="form" :model="form" label-position="top" class="form"
+    <el-form :disabled="disabled" ref="form" :model="form" label-position="top" class="form"
     >
       <el-form-item label="Leave a comment">
         <el-input
@@ -37,6 +37,9 @@ export default {
   props: {
     projectId: {
       required: true,
+    },
+    disabled: {
+      default: false,
     },
   },
   data() {
