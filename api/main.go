@@ -10,6 +10,7 @@ import (
 
 	"api/models"
 
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 )
@@ -29,6 +30,8 @@ func main() {
 		log.Panic(err)
 	}
 	env := &Env{db}
+	r.Post("/auth", env.userAuth)
+
 	r.Get("/projects", env.getProjects)
 	r.Get("/projects/{id}", env.getProject)
 	r.Get("/projects/{id}/comments", env.getProjectComments)
@@ -49,6 +52,46 @@ func main() {
 	port := os.Getenv("PORT")
 	log.Println("Running server at port " + port)
 	http.ListenAndServe(":"+port, r)
+}
+
+func secretKey() []byte {
+	return []byte(os.Getenv("JWT_SECRET"))
+}
+
+type userRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+func (env *Env) userAuth(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+	var userReq userRequest
+	err := decoder.Decode(&userReq)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	user, err := env.db.GetUser(userReq.Email, userReq.Password)
+	if err != nil {
+		respondWithError(w, http.StatusNotFound, err.Error())
+		return
+	}
+
+	// Create JWT token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"userId": user.ID,
+		// Expire in 5 mins
+		"exp": time.Now().Add(time.Minute * 5).Unix(),
+	})
+	// Sign and get the complete encoded token as a string using the secret
+	tokenString, err := token.SignedString(secretKey())
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJSON(w, http.StatusCreated, tokenString)
 }
 
 func (env *Env) getProjects(w http.ResponseWriter, r *http.Request) {
@@ -114,6 +157,7 @@ type projectRequest struct {
 
 func (env *Env) createProject(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
 	var project projectRequest
 	err := decoder.Decode(&project)
 	if err != nil {
@@ -148,7 +192,7 @@ func (env *Env) getUsers(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, users)
 }
 
-type userRequest struct {
+type newUserRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	Username string `json:"username"`
@@ -157,7 +201,8 @@ type userRequest struct {
 
 func (env *Env) createUser(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
-	var u userRequest
+	decoder.DisallowUnknownFields()
+	var u newUserRequest
 	err := decoder.Decode(&u)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, err.Error())
@@ -201,6 +246,7 @@ type paymentRequest struct {
 
 func (env *Env) createPayment(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
 	var payment paymentRequest
 	err := decoder.Decode(&payment)
 	if err != nil {
@@ -255,6 +301,7 @@ type commentRequest struct {
 
 func (env *Env) createComment(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
 	var comment commentRequest
 	err := decoder.Decode(&comment)
 	if err != nil {
