@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Auth from '../auth';
 import Root from '../components/Root';
 import Project from '../components/project/Project';
 import NewProject from '../components/project/NewProject';
@@ -11,6 +10,7 @@ import PaymentsAdmin from '../components/admin/Payments';
 import CommentsAdmin from '../components/admin/Comments';
 import Login from '../components/auth/Login';
 import SignUp from '../components/auth/SignUp';
+import store from '../store';
 
 Vue.use(Router);
 const requiresAuth = true;
@@ -76,7 +76,7 @@ router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     // this route requires auth, check if logged in
     // if not, redirect to login page.
-    if (!Auth.loggedIn()) {
+    if (!store.getters.isLoggedIn) {
       next({
         path: '/login',
         query: { redirect: to.fullPath },

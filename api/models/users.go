@@ -66,11 +66,18 @@ func (db *DB) CreateUser(
 	password string,
 	username string,
 	image string,
-) (int, error) {
-	id := 0
+) (*User, error) {
+	user := User{
+		ID:            0,
+		Email:         email,
+		Username:      username,
+		TotalDonation: 0,
+		Image:         image,
+		IsAdmin:       false,
+	}
 	err := db.QueryRow(`
 		select create_user($1, $2, $3, $4)
 		`, email, password, username, image,
-	).Scan(&id)
-	return id, err
+	).Scan(&user.ID)
+	return &user, err
 }

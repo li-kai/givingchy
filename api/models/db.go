@@ -28,7 +28,7 @@ type Datastore interface {
 
 	AllUsers(numPerPage, pageIdx int) ([]*User, error)
 	GetUser(email string, password string) (*User, error)
-	CreateUser(email string, password string, username string, image string) (int, error)
+	CreateUser(email string, password string, username string, image string) (*User, error)
 
 	AllCategories() ([]*Category, error)
 	CreateCategory(name string) error

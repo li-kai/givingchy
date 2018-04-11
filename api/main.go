@@ -30,13 +30,13 @@ func main() {
 		log.Panic(err)
 	}
 	env := &Env{db}
-	r.Post("/auth", env.userAuth)
 
 	r.Get("/projects", env.getProjects)
 	r.Get("/projects/{id}", env.getProject)
 	r.Get("/projects/{id}/comments", env.getProjectComments)
 	r.Post("/project", env.createProject)
 
+	r.Post("/auth", env.loginUser)
 	r.Post("/user", env.createUser)
 	r.Get("/users", env.getUsers)
 
@@ -56,42 +56,6 @@ func main() {
 
 func secretKey() []byte {
 	return []byte(os.Getenv("JWT_SECRET"))
-}
-
-type userRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-func (env *Env) userAuth(w http.ResponseWriter, r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
-	decoder.DisallowUnknownFields()
-	var userReq userRequest
-	err := decoder.Decode(&userReq)
-	if err != nil {
-		respondWithError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	user, err := env.db.GetUser(userReq.Email, userReq.Password)
-	if err != nil {
-		respondWithError(w, http.StatusNotFound, err.Error())
-		return
-	}
-
-	// Create JWT token
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"userId": user.ID,
-		// Expire in 5 mins
-		"exp": time.Now().Add(time.Minute * 5).Unix(),
-	})
-	// Sign and get the complete encoded token as a string using the secret
-	tokenString, err := token.SignedString(secretKey())
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-	respondWithJSON(w, http.StatusCreated, tokenString)
 }
 
 func (env *Env) getProjects(w http.ResponseWriter, r *http.Request) {
@@ -192,6 +156,51 @@ func (env *Env) getUsers(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, users)
 }
 
+func userAuth(w http.ResponseWriter, user *models.User) {
+	// Create JWT token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+		ExpiresAt: 15000,
+		Issuer:    "10million",
+	})
+	// Sign and get the complete encoded token as a string using the secret
+	tokenString, err := token.SignedString(secretKey())
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	data := map[string]interface{}{
+		"userId":   user.ID,
+		"username": user.Username,
+		"image":    user.Image,
+		"isAdmin":  user.IsAdmin,
+		"token":    tokenString,
+	}
+	respondWithJSON(w, http.StatusCreated, data)
+}
+
+type userRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+func (env *Env) loginUser(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+	var userReq userRequest
+	err := decoder.Decode(&userReq)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	user, err := env.db.GetUser(userReq.Email, userReq.Password)
+	if err != nil {
+		respondWithError(w, http.StatusNotFound, err.Error())
+		return
+	}
+	userAuth(w, user)
+}
+
 type newUserRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
@@ -208,13 +217,12 @@ func (env *Env) createUser(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	userID, err := env.db.CreateUser(u.Email, u.Password, u.Username, u.Image)
+	user, err := env.db.CreateUser(u.Email, u.Password, u.Username, u.Image)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-
-	respondWithJSON(w, http.StatusCreated, userID)
+	userAuth(w, user)
 }
 
 func (env *Env) getCategories(w http.ResponseWriter, r *http.Request) {

@@ -10,8 +10,14 @@
           :model="credentials" :rules="rules"
           label-position="right" label-width="6rem"
         >
-          <el-form-item label="Username" prop="username">
+          <el-form-item label="Email" prop="email">
             <el-input type="text"
+              placeholder="Enter your email"
+              v-model="credentials.email">
+            </el-input>
+          </el-form-item>
+          <el-form-item v-if="!isLogin" label="Username" prop="username">
+            <el-input type="username"
               placeholder="Enter your username"
               v-model="credentials.username">
             </el-input>
@@ -57,13 +63,23 @@ export default {
       // We need to initialize the component with any
       // properties that will be used in it
       credentials: {
+        email: '',
         username: '',
+        image: 'https://www.gravatar.com/avatar/',
         password: '',
       },
       rules: {
-        username: [
+        email: [
           {
             required: true,
+            message: 'Please enter your email',
+            trigger: 'blur',
+          },
+          { min: 3, message: 'Must be at least 3 characters', trigger: 'blur' },
+        ],
+        username: [
+          {
+            required: !this.isLogin,
             message: 'Please enter your username',
             trigger: 'blur',
           },
@@ -88,10 +104,15 @@ export default {
   },
   methods: {
     submit() {
+      const endPoint = this.isLogin ? '/api/auth' : 'api/user';
+      const body = this.isLogin ? {
+        email: this.credentials.email,
+        password: this.credentials.password
+      } : this.credentials;
       axios
-        .post('/api/user', this.credentials)
-        .then(() => {
-          console.log('created user!');
+        .post(endPoint, body)
+        .then((res) => {
+          this.$store.dispatch('loginUser', res.data);
         })
         .catch((err) => {
           console.error(err);
