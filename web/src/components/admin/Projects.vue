@@ -44,8 +44,22 @@
       prop="verified"
       label="Verified">
       <template slot-scope="scope">
-        <el-button plain type="success" size="small"  v-if="scope.row.verified">Verified</el-button>
-        <el-button plain type="danger" size="small" v-else>Unverified</el-button>
+        <el-button
+          plain
+          type="success"
+          size="small"
+          @click="verifyProject(scope.row)"
+          v-if="scope.row.verified">
+          Verified
+        </el-button>
+        <el-button
+          plain
+          type="danger"
+          size="small"
+          @click="verifyProject(scope.row)"
+          v-else>
+          Unverified
+        </el-button>
       </template>
     </el-table-column>
   </data-tables-server>
@@ -74,7 +88,33 @@ export default {
           this.rawProjects = res.data;
         })
         .catch((err) => {
-          this.$message(err);
+          this.this.$notify.error({ title: 'Error', message: err.response.data.error });
+          err;
+        });
+    },
+    verifyProject(proj) {
+      const {
+        id,
+        tags,
+        startTime,
+        amountRequiredString,
+        amountRaised,
+        amountRaisedString,
+        ...relevantFields
+      } = proj;
+      const payload = {
+        ...relevantFields,
+        verified: !proj.verified,
+      };
+      axios
+        .put(`/api/projects/${proj.id}`, payload)
+        .then(() => {
+          this.rawProjects = this.rawProjects.map(function(item) {
+            return item.id === id ? { ...item, verified: !proj.verified } : item;
+          });
+        })
+        .catch((err) => {
+          this.$notify.error({ title: 'Error', message: err.response.data.error });
         });
     },
   },
