@@ -1,10 +1,13 @@
 <template>
 <div>
   <h1>Projects</h1>
-  <el-table
+  <data-tables-server
     :data="projects"
+    :total="10000"
     :row-key="projects.id"
-    style="width: 100%">
+    :load-data="fetchPage"
+    :table-props="{ stripe: false, border: false }"
+    :search-def="{ show: false }">
     <el-table-column
       prop="id"
       label="ID"
@@ -45,7 +48,7 @@
         <el-button plain type="danger" size="small" v-else>Unverified</el-button>
       </template>
     </el-table-column>
-  </el-table>
+  </data-tables-server>
 </div>
 </template>
 
@@ -63,28 +66,27 @@ export default {
       rawProjects: [],
     };
   },
-  methods: {},
-  created() {
-    axios
-      .get('/api/projects', this.credentials)
-      .then((res) => {
-        this.rawProjects = res.data;
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+  methods: {
+    fetchPage({ page, pageSize }) {
+      return axios
+        .get(`/api/projects?page=${page}&limit=${pageSize}`)
+        .then((res) => {
+          this.rawProjects = res.data;
+        })
+        .catch((err) => {
+          this.$message(err);
+        });
+    },
   },
   computed: {
     projects() {
-      return this.rawProjects
-        .map((proj) => {
-          return {
-            ...proj,
-            amountRequiredString: `$${proj.amountRequired}`,
-            amountRaisedString: `$${proj.amountRaised}`,
-          };
-        })
-        .sort((a, b) => a.id - b.id);
+      return this.rawProjects.map((proj) => {
+        return {
+          ...proj,
+          amountRequiredString: `$${proj.amountRequired}`,
+          amountRaisedString: `$${proj.amountRaised}`,
+        };
+      });
     },
   },
 };

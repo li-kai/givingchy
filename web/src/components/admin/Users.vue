@@ -1,10 +1,13 @@
 <template>
 <div>
   <h1>Users</h1>
-  <el-table
+  <data-tables-server
     :data="users"
+    :total="10000"
     :row-key="users.user_id"
-    style="width: 100%">
+    :load-data="fetchPage"
+    :table-props="{ stripe: false, border: false }"
+    :search-def="{ show: false }">
     <el-table-column
       prop="id"
       label="ID"
@@ -26,7 +29,7 @@
         <div v-else>User</div>
       </template>
     </el-table-column>
-  </el-table>
+  </data-tables-server>
 </div>
 </template>
 
@@ -40,16 +43,17 @@ export default {
       users: [],
     };
   },
-  methods: {},
-  created() {
-    axios
-      .get('/api/users', this.credentials)
-      .then((res) => {
-        this.users = res.data;
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+  methods: {
+    fetchPage({ page, pageSize }) {
+      return axios
+        .get(`/api/users?page=${page}&limit=${pageSize}`)
+        .then((res) => {
+          this.users = res.data;
+        })
+        .catch((err) => {
+          this.$message(err);
+        });
+    },
   },
 };
 </script>

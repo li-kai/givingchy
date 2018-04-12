@@ -2153,7 +2153,7 @@ electron-to-chromium@^1.3.33:
   version "1.3.33"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.33.tgz#bf00703d62a7c65238136578c352d6c5c042a545"
 
-element-ui@2.3.3:
+element-ui@2.3.3, element-ui@^2.3.3:
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/element-ui/-/element-ui-2.3.3.tgz#2c14f96ef176851733cd6c627bb220edf0429e3a"
   dependencies:
@@ -6294,6 +6294,14 @@ vm-browserify@0.0.4:
   dependencies:
     indexof "0.0.1"
 
+vue-data-tables@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/vue-data-tables/-/vue-data-tables-3.2.0.tgz#17e88b934ea59313148dc58c026c241bc4d1bdd8"
+  dependencies:
+    element-ui "^2.3.3"
+    lodash "^4.17.4"
+    vue "^2.5.16"
+
 vue-eslint-parser@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/vue-eslint-parser/-/vue-eslint-parser-2.0.3.tgz#c268c96c6d94cfe3d938a5f7593959b0ca3360d1"
@@ -6352,6 +6360,10 @@ vue-template-es2015-compiler@^1.6.0:
 vue@2.5.13:
   version "2.5.13"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.13.tgz#95bd31e20efcf7a7f39239c9aa6787ce8cf578e1"
+
+vue@^2.5.16:
+  version "2.5.16"
+  resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.16.tgz#07edb75e8412aaeed871ebafa99f4672584a0085"
 
 vuex@^3.0.1:
   version "3.0.1"

@@ -1,10 +1,13 @@
 <template>
 <div>
   <h1>Payments</h1>
-  <el-table
+  <data-tables-server
     :data="payments"
+    :total="10000"
     :row-key="payments.id"
-    style="width: 100%">
+    :load-data="fetchPage"
+    :table-props="{ stripe: false, border: false }"
+    :search-def="{ show: false }">
     <el-table-column
       prop="id"
       label="ID"
@@ -24,16 +27,21 @@
       prop="paidAt"
       label="Paid At">
       <date-time
-      slot-scope="scope"
-      :datetime="scope.row.paidAt"></date-time>
+      slot-scope="date"
+      :datetime="date.row.paidAt"></date-time>
     </el-table-column>
     <el-table-column
       label="Actions">
-      <template slot-scope="scope">
-        <el-button type="danger" size="small">Delete</el-button>
+      <template slot-scope="actions">
+        <el-button
+          type="danger"
+          size="small"
+          @click="deletePayment(actions.row.id)">
+          Delete
+        </el-button>
       </template>
     </el-table-column>
-  </el-table>
+  </data-tables-server>
 </div>
 </template>
 
@@ -51,15 +59,27 @@ export default {
       payments: [],
     };
   },
-  created() {
-    axios
-      .get('/api/payments', this.credentials)
-      .then((res) => {
-        this.payments = res.data;
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+  methods: {
+    fetchPage({ page, pageSize }) {
+      return axios
+        .get(`/api/payments?page=${page}&limit=${pageSize}`)
+        .then((res) => {
+          this.payments = res.data;
+        })
+        .catch((err) => {
+          this.$message(err);
+        });
+    },
+    deletePayment(id) {
+      axios
+        .delete(`/api/payments/${id}`)
+        .then((res) => {
+          this.payments = this.payments.filter((payment) => payment.id !== id);
+        })
+        .catch((err) => {
+          this.$message(err);
+        });
+    },
   },
 };
 </script>

@@ -75,6 +75,7 @@ import {
 /* eslint-enable no-unused-vars */
 import lang from 'element-ui/lib/locale/lang/en';
 import locale from 'element-ui/lib/locale';
+import { DataTablesServer } from 'vue-data-tables';
 
 // configure language
 locale.use(lang);
@@ -147,6 +148,7 @@ Vue.config.productionTip = false;
 ].forEach((comp) => Vue.use(comp));
 
 Vue.use(Loading.directive);
+Vue.use(DataTablesServer);
 
 // Vue.prototype.$loading = Loading.service;
 // Vue.prototype.$msgbox = MessageBox;

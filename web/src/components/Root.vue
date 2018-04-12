@@ -14,15 +14,15 @@
       </el-input>
     </el-col>
     <el-col class="categories" :xs="24">
-      <el-tag 
+      <el-tag
         class="categories-tag"
         disable-transitions
-        type="info" 
-        size="medium" 
+        type="info"
+        size="medium"
         color="#FFF"
-        v-for="(cate, index) in categories" 
-        :key="index" 
-        @click.native="querySearch(cate.name)" 
+        v-for="(cate, index) in categories"
+        :key="index"
+        @click.native="querySearch(cate.name)"
         >
         {{cate.name}} ({{cate.projNum}})
       </el-tag>
@@ -101,7 +101,7 @@ export default {
       axios
         .get(`api/projects?page=${this.pageNum}&limit=${this.pageSize}${formatSearchQuery(this.searchTerm)}`)
         .then((res) => {
-          this.projects = res.data.sort((a, b) => a.id - b.id);
+          this.projects = res.data;
           if (this.pageNum >= this.pageCount && this.projects.length === PAGE_SIZE) {
             this.pageCount = this.pageNum + 1;
           }

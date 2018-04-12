@@ -1,10 +1,13 @@
 <template>
 <div>
   <h1>Comments</h1>
-  <el-table
+  <data-tables-server
     :data="comments"
+    :total="10000"
     :row-key="comments.id"
-    style="width: 100%">
+    :load-data="fetchPage"
+    :table-props="{ stripe: false, border: false }"
+    :search-def="{ show: false }">
     <el-table-column
       prop="id"
       label="ID"
@@ -23,16 +26,21 @@
       prop="createdAt"
       label="Created At">
       <date-time
-      slot-scope="scope"
-      :datetime="scope.row.createdAt"></date-time>
+      slot-scope="date"
+      :datetime="date.row.createdAt"></date-time>
     </el-table-column>
     <el-table-column
       label="Actions">
-      <template slot-scope="scope">
-        <el-button type="danger" size="small">Delete</el-button>
+      <template slot-scope="actions">
+        <el-button
+          type="danger"
+          size="small"
+          @click="deleteComment(actions.row.id)">
+          Delete
+          </el-button>
       </template>
     </el-table-column>
-  </el-table>
+  </data-tables-server>
 </div>
 </template>
 
@@ -47,24 +55,29 @@ export default {
   },
   data() {
     return {
-      rawComments: [],
+      comments: [],
     };
   },
-  methods: {},
-  created() {
-    axios
-      .get('/api/comments', this.credentials)
-      .then((res) => {
-        this.rawComments = res.data;
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  },
-  computed: {
-    comments() {
-      return this.rawComments.slice()
-        .sort((a, b) => a.id - b.id);
+  methods: {
+    fetchPage({ page, pageSize }) {
+      return axios
+        .get(`/api/comments?page=${page}&limit=${pageSize}`)
+        .then((res) => {
+          this.comments = res.data;
+        })
+        .catch((err) => {
+          this.$message(err);
+        });
+    },
+    deleteComment(id) {
+      axios
+        .delete(`/api/comments/${id}`)
+        .then((res) => {
+          this.comments = this.comments.filter((comment) => comment.id !== id);
+        })
+        .catch((err) => {
+          this.$message(err);
+        });
     },
   },
 };
