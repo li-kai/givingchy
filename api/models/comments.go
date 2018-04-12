@@ -79,7 +79,7 @@ func (db *DB) UpdateComment(commentID int, content string) error {
 // DeleteComment deletes a comment given id
 func (db *DB) DeleteComment(commentID int) error {
 	_, err := db.Exec(`
-        select delete_commet($1)
+        select delete_comment($1)
     `, commentID,
 	)
 	return err

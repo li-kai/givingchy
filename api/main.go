@@ -33,6 +33,7 @@ func main() {
 
 	r.Get("/projects", env.getProjects)
 	r.Get("/projects/{id}", env.getProject)
+	// r.Put("/projects/{id}", env.putProject)
 	r.Get("/projects/{id}/comments", env.getProjectComments)
 	r.Post("/project", env.createProject)
 
@@ -42,12 +43,14 @@ func main() {
 
 	r.Get("/payments", env.getPayments)
 	r.Post("/payments", env.createPayment)
+	r.Delete("/payments/{id}", env.deletePayment)
 
 	r.Get("/categories", env.getCategories)
 	r.Post("/category", env.createCategory)
 
 	r.Get("/comments", env.getComments)
 	r.Post("/comments", env.createComment)
+	r.Delete("/comments/{id}", env.deleteComment)
 
 	port := os.Getenv("PORT")
 	log.Println("Running server at port " + port)
@@ -79,8 +82,8 @@ func (env *Env) getProjects(w http.ResponseWriter, r *http.Request) {
 }
 
 func (env *Env) getProject(w http.ResponseWriter, r *http.Request) {
-	projectID := chi.URLParam(r, "id")
-	if projectID == "" {
+	projectID, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
 		respondWithError(w, http.StatusNotFound, "No such project id")
 		return
 	}
@@ -274,6 +277,19 @@ func (env *Env) createPayment(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusCreated, paymentID)
 }
 
+func (env *Env) deletePayment(w http.ResponseWriter, r *http.Request) {
+	paymentID, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil  {
+		respondWithError(w, http.StatusNotFound, "No such payment id")
+		return
+	}
+	if err := env.db.DeletePayment(paymentID); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+}
+
 func (env *Env) createCategory(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var category models.Category
@@ -327,6 +343,19 @@ func (env *Env) createComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respondWithJSON(w, http.StatusCreated, commentID)
+}
+
+func (env *Env) deleteComment(w http.ResponseWriter, r *http.Request) {
+	commentID, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil  {
+		respondWithError(w, http.StatusNotFound, "No such comment id")
+		return
+	}
+	if err := env.db.DeleteComment(commentID); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func getPaginationCursor(r *http.Request) (numPerPage, pageIndex int) {
