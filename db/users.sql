@@ -39,6 +39,24 @@ begin
 end
 $$ language plpgsql;
 
+create or replace function get_users_quarter_donations()
+returns setof numeric as $$
+declare
+    quarter_donation numeric;
+    donations numeric array;
+begin
+    select percentile_disc(array[0.25,0.5,0.75,1])
+    within group (order by total_donation)
+    into donations
+    from users;
+    foreach quarter_donation in array donations 
+    loop
+        return next quarter_donation;
+    end loop;
+    return;
+end
+$$ language plpgsql;
+
 create or replace function get_user(_email citext, _password varchar(255))
 returns user_row as $$
 declare
