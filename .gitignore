@@ -106,6 +106,7 @@ typings/
 ### Docker ###
 
 postgres-data/
+dist/
 
 ### Code editors ###
 .vscode

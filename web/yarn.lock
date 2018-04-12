@@ -573,7 +573,7 @@
   version "3.0.0-beta.6"
   resolved "https://registry.yarnpkg.com/@vue/cli-overlay/-/cli-overlay-3.0.0-beta.6.tgz#bc11b99e8b6550b43326305ee11f27d07ceaeec0"
 
-"@vue/cli-plugin-babel@3.0.0-beta.6":
+"@vue/cli-plugin-babel@^3.0.0-beta.6":
   version "3.0.0-beta.6"
   resolved "https://registry.yarnpkg.com/@vue/cli-plugin-babel/-/cli-plugin-babel-3.0.0-beta.6.tgz#4b8b887f2151a2c505adb0ddb2ea145a3b2d60f3"
   dependencies:
@@ -581,7 +581,7 @@
     "@vue/babel-preset-app" "^3.0.0-beta.6"
     babel-loader "^8.0.0-0"
 
-"@vue/cli-plugin-eslint@3.0.0-beta.6":
+"@vue/cli-plugin-eslint@^3.0.0-beta.6":
   version "3.0.0-beta.6"
   resolved "https://registry.yarnpkg.com/@vue/cli-plugin-eslint/-/cli-plugin-eslint-3.0.0-beta.6.tgz#92e2e3801a70199374edefdd1051aed6b4464824"
   dependencies:
@@ -590,7 +590,7 @@
     eslint-loader "^2.0.0"
     eslint-plugin-vue "^4.3.0"
 
-"@vue/cli-service@3.0.0-beta.6":
+"@vue/cli-service@^3.0.0-beta.6":
   version "3.0.0-beta.6"
   resolved "https://registry.yarnpkg.com/@vue/cli-service/-/cli-service-3.0.0-beta.6.tgz#b229b5fd3c5db33f0df9824f0b99ca081fa38d20"
   dependencies:
@@ -964,7 +964,7 @@ aws4@^1.2.1:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.6.0.tgz#83ef5ca860b2b32e4a0deedee8c771b9db57471e"
 
-axios@0.18.0:
+axios@^0.18.0:
   version "0.18.0"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.18.0.tgz#32d53e4851efdc0a11993b6cd000789d70c05102"
   dependencies:
@@ -1002,7 +1002,7 @@ babel-loader@^8.0.0-0:
     loader-utils "^1.0.2"
     mkdirp "^0.5.1"
 
-babel-plugin-component@1.1.0:
+babel-plugin-component@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-component/-/babel-plugin-component-1.1.0.tgz#74fa3446814bca990f52bcad6700465361b011b7"
   dependencies:
@@ -1902,7 +1902,7 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
-date-fns@1.29.0:
+date-fns@^1.29.0:
   version "1.29.0"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.29.0.tgz#12e609cdcb935127311d04d33334e2960a2a54e6"
 
@@ -2153,7 +2153,7 @@ electron-to-chromium@^1.3.33:
   version "1.3.33"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.33.tgz#bf00703d62a7c65238136578c352d6c5c042a545"
 
-element-ui@2.3.3, element-ui@^2.3.3:
+element-ui@^2.3.3:
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/element-ui/-/element-ui-2.3.3.tgz#2c14f96ef176851733cd6c627bb220edf0429e3a"
   dependencies:
@@ -6335,7 +6335,7 @@ vue-loader@^14.1.1:
     vue-style-loader "^4.0.1"
     vue-template-es2015-compiler "^1.6.0"
 
-vue-router@3.0.1:
+vue-router@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.0.1.tgz#d9b05ad9c7420ba0f626d6500d693e60092cc1e9"
 
