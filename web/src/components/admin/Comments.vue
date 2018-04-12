@@ -72,7 +72,7 @@ export default {
     deleteComment(id) {
       axios
         .delete(`/api/comments/${id}`)
-        .then((res) => {
+        .then(() => {
           this.comments = this.comments.filter((comment) => comment.id !== id);
         })
         .catch((err) => {

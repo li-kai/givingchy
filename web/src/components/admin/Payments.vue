@@ -73,7 +73,7 @@ export default {
     deletePayment(id) {
       axios
         .delete(`/api/payments/${id}`)
-        .then((res) => {
+        .then(() => {
           this.payments = this.payments.filter((payment) => payment.id !== id);
         })
         .catch((err) => {
