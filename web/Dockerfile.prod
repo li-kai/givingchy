@@ -1,0 +1,20 @@
+FROM node:9-alpine
+
+RUN mkdir -p /home/node/app
+WORKDIR /home/node/app
+
+# cache from least likely to most likely to change
+COPY ./web/public ./public
+
+COPY ./web/package.json ./web/yarn.lock ./
+
+RUN yarn --no-cache --frozen-lockfile
+
+COPY ./web/src/ ./src
+
+RUN yarn build
+
+FROM nginx:1.13-alpine
+
+COPY --from=0 /home/node/app/dist /usr/share/nginx/html
+COPY ./proxy/nginx.prod.conf /etc/nginx/nginx.conf

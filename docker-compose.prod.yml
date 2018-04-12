@@ -3,11 +3,9 @@ services:
   api:
     build:
       context: ./api
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.prod
     env_file:
       - .env
-    volumes:
-      - ./api:/go/src/api
     environment:
       - PORT=8081
     expose:
@@ -15,17 +13,18 @@ services:
     depends_on:
       - postgres
     restart: on-failure
-  web:
+  proxy:
     build:
-      context: ./web
-      dockerfile: Dockerfile.dev
+      context: ./
+      dockerfile: ./web/Dockerfile.prod
     env_file:
       - .env
-    volumes:
-      - yarn:/home/node/.cache/yarn
-      - ./web:/home/node/app
-    expose:
-      - "8080"
+    ports:
+      - "80:80"
+      - "443:443"
+    secrets:
+      - "server.key"
+      - "server.crt"
     depends_on:
       - api
     restart: on-failure
@@ -38,23 +37,6 @@ services:
       - ./db:/docker-entrypoint-initdb.d
     expose:
       - "5432"
-  proxy:
-    image: nginx:1.13-alpine
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./proxy/nginx.dev.conf:/etc/nginx/nginx.conf
-    secrets:
-      - "server.key"
-      - "server.crt"
-    depends_on:
-      - api
-      - web
-    restart: on-failure
-
-volumes:
-  yarn:
 
 secrets:
   "server.key":

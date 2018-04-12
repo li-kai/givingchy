@@ -42,7 +42,7 @@ docker-machine env demo
 eval $(docker-machine env demo)
 docker-machine ssh demo
 # repeat set up steps
-docker-compose up -d
+docker-compose -f docker-compose.prod.yml up -d
 ```
 
 ## Testing
