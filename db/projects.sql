@@ -38,7 +38,8 @@ select
     as document
 from projects p
 left join tags t on p.project_id = t.project_id
-group by p.project_id;
+group by p.project_id
+order by p.start_time desc;
 
 create or replace function all_projects(_num_per_page int, _idx_page int)
 returns setof project_row as $$
