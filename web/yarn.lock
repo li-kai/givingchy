@@ -6294,7 +6294,7 @@ vm-browserify@0.0.4:
   dependencies:
     indexof "0.0.1"
 
-vue-data-tables@^3.2.0:
+vue-data-tables@3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/vue-data-tables/-/vue-data-tables-3.2.0.tgz#17e88b934ea59313148dc58c026c241bc4d1bdd8"
   dependencies:
@@ -6365,7 +6365,7 @@ vue@^2.5.16:
   version "2.5.16"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.16.tgz#07edb75e8412aaeed871ebafa99f4672584a0085"
 
-vuex@^3.0.1:
+vuex@3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/vuex/-/vuex-3.0.1.tgz#e761352ebe0af537d4bb755a9b9dc4be3df7efd2"
 
