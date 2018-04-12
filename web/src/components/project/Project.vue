@@ -80,7 +80,7 @@ export default {
       if (isFuture(endTime)) {
         return `Closes in ${ago}`;
       }
-      return "Project has ended";
+      return 'Project has ended';
     },
     fundingPercentage() {
       const { amountRaised, amountRequired } = this.project;
@@ -105,26 +105,28 @@ export default {
   },
   methods: {
     submit() {
-      axios.post("/api/payments", {
-        userId: this.user.userId,
-        projectId: this.project.id,
-        amount: this.fundingAmount,
-      }).then(() => {
-        this.project.amountRaised += this.fundingAmount;
-        this.fundingAmount = 0;
-        // reset amount
-        this.$notify({
-          title: 'Success!',
-          message: "You've backed a project",
-          type: 'success',
+      axios
+        .post('/api/payments', {
+          userId: this.user.userId,
+          projectId: this.project.id,
+          amount: this.fundingAmount,
+        })
+        .then(() => {
+          this.project.amountRaised += this.fundingAmount;
+          this.fundingAmount = 0;
+          // reset amount
+          this.$notify({
+            title: 'Success!',
+            message: "You've backed a project",
+            type: 'success',
+          });
+        })
+        .catch((err) => {
+          this.$notify.error({
+            title: 'Error',
+            message: err.response.data.error,
+          });
         });
-      }).catch((err) => {
-        this.$notify({
-          title: 'Error!',
-          message: err.response.data.error,
-          type: 'error',
-        });
-      });
     },
   },
 };

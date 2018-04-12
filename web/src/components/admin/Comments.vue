@@ -66,7 +66,7 @@ export default {
           this.comments = res.data;
         })
         .catch((err) => {
-          this.$message(err);
+          this.$notify.error({ title: 'Error', message: err.response.data.error });
         });
     },
     deleteComment(id) {
@@ -76,7 +76,7 @@ export default {
           this.comments = this.comments.filter((comment) => comment.id !== id);
         })
         .catch((err) => {
-          this.$message(err);
+          this.$notify.error({ title: 'Error', message: err.response.data.error });
         });
     },
   },

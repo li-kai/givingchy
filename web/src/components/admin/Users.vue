@@ -51,7 +51,7 @@ export default {
           this.users = res.data;
         })
         .catch((err) => {
-          this.$message(err);
+          this.$notify.error({ title: 'Error', message: err.response.data.error });
         });
     },
   },

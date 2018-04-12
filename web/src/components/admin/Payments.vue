@@ -67,7 +67,7 @@ export default {
           this.payments = res.data;
         })
         .catch((err) => {
-          this.$message(err);
+          this.$notify.error({ title: 'Error', message: err.response.data.error });
         });
     },
     deletePayment(id) {
@@ -77,7 +77,7 @@ export default {
           this.payments = this.payments.filter((payment) => payment.id !== id);
         })
         .catch((err) => {
-          this.$message(err);
+          this.$notify.error({ title: 'Error', message: err.response.data.error });
         });
     },
   },
