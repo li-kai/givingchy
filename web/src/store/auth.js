@@ -1,7 +1,7 @@
 // initial state
 const state = {
-  user: {},
-  token: '',
+  user: JSON.parse(sessionStorage.getItem("user")) || {},
+  token: sessionStorage.getItem("token") || "",
 };
 
 // getters
@@ -26,10 +26,13 @@ const mutations = {
     token,
     ...user
   }) {
+    sessionStorage.setItem("user", JSON.stringify(user));
+    sessionStorage.setItem("token", token);
     state.user = user;
     state.token = token;
   },
   logoutUser(state) {
+    sessionStorage.clear();
     state.user = {};
     state.token = '';
   }
