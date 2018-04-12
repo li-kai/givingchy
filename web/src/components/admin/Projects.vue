@@ -93,6 +93,7 @@ export default {
         });
     },
     verifyProject(proj) {
+      /* eslint-disable no-unused-vars */
       const {
         id,
         tags,
@@ -102,6 +103,7 @@ export default {
         amountRaisedString,
         ...relevantFields
       } = proj;
+      /* eslint-enable no-unused-vars */
       const payload = {
         ...relevantFields,
         verified: !proj.verified,

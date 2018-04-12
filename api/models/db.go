@@ -13,7 +13,7 @@ import (
 
 // Datastore defines all methods over models
 type Datastore interface {
-	// AllStatistics() (map[string]interface{}, error)
+	AllStatistics() ([]*Statistic, error)
 
 	AllProjects(numPerPage, pageIdx int) ([]*Project, error)
 	SearchProjects(searchTerm string, numPerPage, pageIdx int) ([]*Project, error)

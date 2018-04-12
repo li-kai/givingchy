@@ -31,6 +31,8 @@ func main() {
 	}
 	env := &Env{db}
 
+	r.Get("/stats", env.getStats)
+
 	r.Get("/projects", env.getProjects)
 	r.Get("/projects/{id}", env.getProject)
 	r.Get("/projects/{id}/comments", env.getProjectComments)
@@ -59,6 +61,15 @@ func main() {
 
 func secretKey() []byte {
 	return []byte(os.Getenv("JWT_SECRET"))
+}
+
+func (env *Env) getStats(w http.ResponseWriter, r *http.Request) {
+	stats, err := env.db.AllStatistics()
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	respondWithJSON(w, http.StatusOK, stats)
 }
 
 func (env *Env) getProjects(w http.ResponseWriter, r *http.Request) {

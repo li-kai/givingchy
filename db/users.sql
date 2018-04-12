@@ -19,7 +19,7 @@ declare
 begin
     insert into logs(content, log_level)
         values ('Select all users', 1);
-    open usr_row_cursor for 
+    open usr_row_cursor for
         select user_id, email, username, total_donation, image, is_admin
         from users
         order by user_id;
@@ -40,19 +40,47 @@ end
 $$ language plpgsql;
 
 create or replace function get_users_quarter_donations()
-returns setof numeric as $$
+returns numeric[] as $$
 declare
     quarter_donation numeric;
     donations numeric array;
 begin
-    select percentile_disc(array[0.25,0.5,0.75,1])
+    select percentile_disc(array[0,0.25,0.5,0.75,1])
     within group (order by total_donation)
     into donations
     from users;
-    foreach quarter_donation in array donations 
+    return donations;
+end
+$$ language plpgsql;
+
+create type donor_row as (
+    username citext,
+    total_donation numeric(10, 2),
+    image citext
+);
+
+create or replace function top_donors()
+returns setof donor_row as $$
+declare
+    usr donor_row%rowtype;
+    usr_row_cursor refcursor;
+    i int;
+begin
+    insert into logs(content, log_level)
+        values ('Select all users', 1);
+    open usr_row_cursor for
+        select username, total_donation, image
+        from users
+        order by total_donation desc
+        limit 3;
+    i := 0;
     loop
-        return next quarter_donation;
+        i := i + 1;
+        fetch usr_row_cursor into usr;
+        exit when not found;
+        return next usr;
     end loop;
+    close usr_row_cursor;
     return;
 end
 $$ language plpgsql;
@@ -73,7 +101,7 @@ end
 $$ language plpgsql;
 
 create or replace function create_user(
-    _email citext, 
+    _email citext,
     _password varchar(255),
     _username citext,
     _image citext)

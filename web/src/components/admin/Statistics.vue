@@ -1,88 +1,73 @@
 <template>
 <div>
   <h1>Statistics</h1>
-  <data-tables-server
-    :data="comments"
-    :total="10000"
-    :row-key="comments.id"
-    :load-data="fetchPage"
-    :table-props="{ stripe: false, border: false }"
-    :search-def="{ show: false }">
+  <hr>
+  <h2>User rankings</h2>
+  <el-table
+    :data="donors"
+    style="width: 100%">
     <el-table-column
-      prop="id"
-      label="ID"
-      width="50">
-    </el-table-column>
-    <el-table-column
-      prop="userId"
-      label="User ID"
-      width="70">
-    </el-table-column>
-    <el-table-column
-      prop="content"
-      label="Content">
-    </el-table-column>
-    <el-table-column
-      prop="createdAt"
-      label="Created At">
-      <date-time
-      slot-scope="date"
-      :datetime="date.row.createdAt"></date-time>
-    </el-table-column>
-    <el-table-column
-      label="Actions">
-      <template slot-scope="actions">
-        <el-button
-          type="danger"
-          size="small"
-          @click="deleteComment(actions.row.id)">
-          Delete
-          </el-button>
+      prop="username"
+      label="Username">
+      <template slot-scope="scope">
+        <div class="user">
+          <img class="user-image" :src="scope.row.image" alt="user profile">
+          <div>{{scope.row.username}}</div>
+        </div>
       </template>
     </el-table-column>
-  </data-tables-server>
+    <el-table-column
+      prop="totalDonation"
+      label="Total amount donated">
+    </el-table-column>
+  </el-table>
+  <hr>
+  <h2>User payment statistics</h2>
+  <el-table
+    :data="userData"
+    style="width: 100%">
+    <el-table-column
+      prop="percentile"
+      label="Percentile">
+    </el-table-column>
+    <el-table-column
+      prop="value"
+      label="Value">
+    </el-table-column>
+  </el-table>
 </div>
 </template>
 
 <script>
 import axios from 'axios';
-import DateTime from './DateTime';
 
 export default {
-  name: 'comments',
-  components: {
-    DateTime,
-  },
+  name: 'statistics',
   data() {
     return {
-      comments: [],
+      userData: [],
+      donors: [],
     };
   },
-  methods: {
-    fetchPage({ page, pageSize }) {
-      return axios
-        .get(`/api/comments?page=${page}&limit=${pageSize}`)
-        .then((res) => {
-          this.comments = res.data;
-        })
-        .catch((err) => {
-          this.$notify.error({ title: 'Error', message: err.response.data.error });
-        });
-    },
-    deleteComment(id) {
-      axios
-        .delete(`/api/comments/${id}`)
-        .then((res) => {
-          this.comments = this.comments.filter((comment) => comment.id !== id);
-        })
-        .catch((err) => {
-          this.$notify.error({ title: 'Error', message: err.response.data.error });
-        });
-    },
+  created() {
+    axios.get('/api/stats').then((res) => {
+      const quartileKeys = ['Minimum', 'First Quartile', 'Median', 'Third Quartile', 'Maximum'];
+      const quartileValues = res.data.find((stat) => stat.name === "users").values;
+      this.userData = quartileKeys.map((key, i) => ({ percentile: key, value: quartileValues[i] }));
+      this.donors = res.data.find((stat) => stat.name === "top_donors").values;
+      console.log(this.donors);
+    });
   },
 };
 </script>
 
 <style scoped>
-
+.user {
+  display: flex;
+  align-items: center;
+}
+.user-image {
+  height: 70px;
+  margin-right: 1rem;
+}
 </style>
