@@ -18,7 +18,7 @@ create type project_row as (
 );
 
 create or replace view aggregated_projects AS
-select 
+select
     p.project_id,
     p.title,
     p.user_id,
@@ -49,8 +49,8 @@ declare
 begin
     insert into logs(content, log_level)
         values ('Select all projects', 1);
-    open proj_row_cursor for 
-        select 
+    open proj_row_cursor for
+        select
             project_id,
             title,
             user_id,
@@ -89,7 +89,7 @@ declare
 begin
     insert into logs(content, log_level)
         values ('Search projects', 1);
-    open proj_row_cursor for 
+    open proj_row_cursor for
         select * from aggregated_projects p
         where p.document @@ to_tsquery(_keyword);
     move absolute (_idx_page - 1) * _num_per_page from proj_row_cursor;
@@ -124,6 +124,29 @@ returns integer as $$
         from projects
 $$ language sql;
 
+create or replace function update_project(
+    _project_id int,
+    _title varchar(100),
+    _user_id int,
+    _category citext,
+    _description text,
+    _image citext,
+    _verified boolean,
+    _amount_required numeric,
+    _end_time timestamp)
+returns void as $$
+    update projects
+    set title = _title,
+        user_id = _user_id,
+        category = _category,
+        description = _description,
+        image = _image,
+        verified = _verified,
+        amount_required = _amount_required,
+        end_time = _end_time
+    where project_id = _project_id;
+$$ language sql;
+
 create or replace function get_project(_project_id int)
 returns project_row as $$
 declare
@@ -131,7 +154,7 @@ declare
 begin
     insert into logs(project_id, content, log_level)
         values (_project_id, 'Select project', 1);
-    select 
+    select
         project_id,
         title,
         user_id,

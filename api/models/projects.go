@@ -84,8 +84,35 @@ func (db *DB) CreateProject(
 	return id, err
 }
 
+// ReplaceProject Replaces a funding project
+func (db *DB) ReplaceProject(
+	id int,
+	title string,
+	userID int,
+	category string,
+	description string,
+	image string,
+	verified bool,
+	amountRequired float64,
+	endTime time.Time,
+) error {
+	_, err := db.Exec(`
+        select update_project($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    `, id,
+		title,
+		userID,
+		category,
+		description,
+		image,
+		verified,
+		amountRequired,
+		endTime,
+	)
+	return err
+}
+
 // GetProject returns all relevant data pertaining to the project
-func (db *DB) GetProject(id string) (*Project, error) {
+func (db *DB) GetProject(id int) (*Project, error) {
 	var project Project
 	err := db.QueryRow(`
         select * from get_project($1)

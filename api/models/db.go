@@ -13,6 +13,8 @@ import (
 
 // Datastore defines all methods over models
 type Datastore interface {
+	// AllStatistics() (map[string]interface{}, error)
+
 	AllProjects(numPerPage, pageIdx int) ([]*Project, error)
 	SearchProjects(searchTerm string, numPerPage, pageIdx int) ([]*Project, error)
 	CreateProject(
@@ -24,7 +26,18 @@ type Datastore interface {
 		amountRequired float64,
 		endTime time.Time,
 	) (int, error)
-	GetProject(id string) (*Project, error)
+	ReplaceProject(
+		id int,
+		title string,
+		userID int,
+		category string,
+		description string,
+		image string,
+		verified bool,
+		amountRequired float64,
+		endTime time.Time,
+	) error
+	GetProject(id int) (*Project, error)
 
 	AllUsers(numPerPage, pageIdx int) ([]*User, error)
 	GetUser(email string, password string) (*User, error)

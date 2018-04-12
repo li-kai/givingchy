@@ -33,8 +33,8 @@ func main() {
 
 	r.Get("/projects", env.getProjects)
 	r.Get("/projects/{id}", env.getProject)
-	// r.Put("/projects/{id}", env.putProject)
 	r.Get("/projects/{id}/comments", env.getProjectComments)
+	r.Put("/projects/{id}", env.putProject)
 	r.Post("/project", env.createProject)
 
 	r.Post("/auth", env.loginUser)
@@ -118,8 +118,42 @@ type projectRequest struct {
 	Category       string    `json:"category"`
 	Description    string    `json:"description"`
 	Image          string    `json:"image"`
+	Verified       bool      `json:"verified,omitempty"`
 	AmountRequired float64   `json:"amountRequired"`
 	EndTime        time.Time `json:"endTime"`
+}
+
+func (env *Env) putProject(w http.ResponseWriter, r *http.Request) {
+	projectID, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		respondWithError(w, http.StatusNotFound, "No such project id")
+		return
+	}
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+	var project projectRequest
+	err = decoder.Decode(&project)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	err = env.db.ReplaceProject(
+		projectID,
+		project.Title,
+		project.UserID,
+		project.Category,
+		project.Description,
+		project.Image,
+		project.Verified,
+		project.AmountRequired,
+		project.EndTime,
+	)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusNoContent, projectID)
 }
 
 func (env *Env) createProject(w http.ResponseWriter, r *http.Request) {
@@ -279,7 +313,7 @@ func (env *Env) createPayment(w http.ResponseWriter, r *http.Request) {
 
 func (env *Env) deletePayment(w http.ResponseWriter, r *http.Request) {
 	paymentID, err := strconv.Atoi(chi.URLParam(r, "id"))
-	if err != nil  {
+	if err != nil {
 		respondWithError(w, http.StatusNotFound, "No such payment id")
 		return
 	}
@@ -347,7 +381,7 @@ func (env *Env) createComment(w http.ResponseWriter, r *http.Request) {
 
 func (env *Env) deleteComment(w http.ResponseWriter, r *http.Request) {
 	commentID, err := strconv.Atoi(chi.URLParam(r, "id"))
-	if err != nil  {
+	if err != nil {
 		respondWithError(w, http.StatusNotFound, "No such comment id")
 		return
 	}
