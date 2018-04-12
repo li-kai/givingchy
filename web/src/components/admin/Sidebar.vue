@@ -6,6 +6,10 @@
         :router="true"
         :default-active="$route.path"
         class="el-menu-vertical-demo">
+        <el-menu-item index="/admin/stats">
+          <i class="el-icon-menu"></i>
+          <span>Stats</span>
+        </el-menu-item>
         <el-menu-item index="/admin/users">
           <i class="el-icon-mobile-phone"></i>
           <span>Users</span>

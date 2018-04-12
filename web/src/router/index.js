@@ -4,6 +4,7 @@ import Root from '../components/Root';
 import Project from '../components/project/Project';
 import NewProject from '../components/project/NewProject';
 import AdminSidebar from '../components/admin/Sidebar';
+import StatisticsAdmin from '../components/admin/Statistics';
 import UsersAdmin from '../components/admin/Users';
 import ProjectsAdmin from '../components/admin/Projects';
 import PaymentsAdmin from '../components/admin/Payments';
@@ -44,9 +45,14 @@ const router = new Router({
     {
       path: '/admin',
       component: AdminSidebar,
-      redirect: '/admin/users',
+      redirect: '/admin/stats',
       meta: { requiresAuth },
       children: [
+        {
+          path: 'stats',
+          component: StatisticsAdmin,
+          meta: { requiresAuth },
+        },
         {
           path: 'users',
           component: UsersAdmin,
